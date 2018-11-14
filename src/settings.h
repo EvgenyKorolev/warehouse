@@ -5,6 +5,7 @@
 #include <QList>
 #include <QFile>
 #include <QDir>
+#include <QDate>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QSqlQuery>
@@ -16,10 +17,11 @@ public:
         static settings _instance;
         return _instance;
     }
-    bool is_hollyday() const;
+    bool is_hollyday(const QDate&) const;
     bool add_hollyday(const QDate&);
     bool del_holliday(const QDate&);
 
+    unsigned work_days(const QDate&) const;
     void create_base();
     QSqlDatabase& get_db(){return db;}
     bool save_ini() const;

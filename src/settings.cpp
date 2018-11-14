@@ -61,6 +61,17 @@ bool settings::save_ini() const
     }
     return false;
 }
+unsigned settings::work_days(const QDate& arg) const
+{
+    QDate tmp = arg;
+    unsigned ret{0};
+    if (tmp >= QDate::currentDate()) return ret;
+    while (tmp != QDate::currentDate()){
+        if (tmp.dayOfWeek() != 6 || tmp.dayOfWeek() != 7 || !is_hollyday(tmp)) ++ret;
+        tmp = tmp.addDays(1);
+    }
+    return ret;
+}
 void settings::create_base()
 {
     QDir my_dir(db_dir);

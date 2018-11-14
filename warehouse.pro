@@ -31,7 +31,8 @@ SOURCES += \
     src/lst_model.cpp \
     src/lst_view.cpp \
     src/settings.cpp \
-    src/proxy_data.cpp
+    src/proxy_data.cpp \
+    src/functions.cpp
 
 HEADERS += \
     src/mainwindow.h \

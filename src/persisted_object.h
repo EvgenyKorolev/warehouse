@@ -36,6 +36,7 @@ public:
 
     QString get_text() const;
     QImage get_foto() const;
+    unsigned get_pay() const;
 
     void set_many(unsigned arg){cost = arg;}
     unsigned get_many() const{return cost;}
