@@ -86,10 +86,10 @@ void settings::create_base()
     db.setDatabaseName(db_dir + db_name);
     if(!db.open()){ QMessageBox::information(nullptr, "Внимание", "База данных не открывается");}
     QSqlQuery query(db);
-    QString prep = "CREATE TABLE persisted(kl_name TEXT NOT NULL, kl_surname TEXT NOT NULL, kl_fname TEXT NOT NULL,"
+    QString prep = "CREATE TABLE persisted(kl_name TEXT, kl_surname TEXT, kl_fname TEXT,"
                    "start_data INTEGER, pay_data INTEGER, info TEXT, cost INTEGER, "
                    "dop_cost INTEGER, many INTEGER, closed TEXT, uniq INTEGER UNIQUE NOT NULL,"
-                   "foto_name TEXT UNIQUE, hash TEXT, inq INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL);";
+                   "foto_name TEXT, hash TEXT, inq INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL);";
     if (!query.exec(prep)) {
         QMessageBox::information(nullptr, "Внимание", "База данных пуста и не удается создать таблицу persisted");
     }

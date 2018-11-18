@@ -6,13 +6,19 @@
 #include <QVariant>
 #include <QImage>
 #include <QString>
-
+#include <random>
 class persisted_object
 {
 public:
     persisted_object() : person{std::make_tuple("", "", "")},
         start_data{QDate()}, pay_data{QDate()}, info{""}, cost{0},
-        dop_cost{0}, many{0}, closed{false}, foto{""}, hash{0}, nll(true){}
+        dop_cost{0}, many{0}, closed{false}, foto{""}, hash{0}, nll(true){
+        uniq = QDateTime::currentSecsSinceEpoch();
+        std::random_device gensc;
+        std::mt19937 gen;
+        gen.seed(gensc());
+        uniq = uniq | static_cast<qint64>(gen());
+    }
     ~persisted_object() = default;
     persisted_object(const persisted_object&) = default;
     persisted_object(const persisted_object*);
@@ -66,7 +72,7 @@ private:
     unsigned dop_cost;   // Стоимость допуслуг
     unsigned many;  // полная стоимость на моммент закрытия
     bool closed;  // Забрали ли объект
-    size_t uniq;  // Уникальный номер
+    qint64 uniq;  // Уникальный номер
     QString foto; // файл фотографии
     qint32 hash; // Хэш фотографии
     bool nll;

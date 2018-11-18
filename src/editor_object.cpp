@@ -26,7 +26,7 @@ void editor_object::init()
     cost = new QSpinBox();
     dop_cost = new QSpinBox();
     QPushButton* push_ok = new QPushButton("Готово");
-    QObject::connect(push_ok, SIGNAL(clicked()), this, SLOT(reject()));
+    QObject::connect(push_ok, SIGNAL(clicked()), this, SLOT(slot_save()));
     QPushButton* push_cancel = new QPushButton("Отмена");
     QObject::connect(push_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     QPushButton* image_push = new QPushButton("Загрузить фото");

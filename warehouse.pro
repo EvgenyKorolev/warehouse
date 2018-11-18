@@ -33,7 +33,10 @@ SOURCES += \
     src/settings.cpp \
     src/proxy_data.cpp \
     src/functions.cpp \
-    src/editor_object.cpp
+    src/editor_object.cpp \
+    src/editor_hollydays.cpp \
+    src/filtr.cpp \
+    src/yes_no.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -43,7 +46,10 @@ HEADERS += \
     src/settings.h \
     src/proxy_data.h \
     src/functions.h \
-    src/editor_object.h
+    src/editor_object.h \
+    src/editor_hollydays.h \
+    src/filtr.h \
+    src/yes_no.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
