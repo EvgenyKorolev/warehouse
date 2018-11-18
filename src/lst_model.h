@@ -4,11 +4,10 @@
 #include <memory>
 #include <QAbstractTableModel>
 
-
 class lst_model : public QAbstractTableModel
 {
 public:
-    lst_model(const proxy_data& arg, QObject *parent = nullptr);
+    lst_model(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent) const;

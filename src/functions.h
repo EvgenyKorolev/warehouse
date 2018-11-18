@@ -7,6 +7,5 @@ QString base64_plus(const QString& arg);
 QString base64_minus(const QString& arg);
 QString base64_plus(const QString&& arg);
 QString base64_minus(const QString&& arg);
-QString im_hash(const QImage& arg);
 }
 #endif // FUNCTIONS_H

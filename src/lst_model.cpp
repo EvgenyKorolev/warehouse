@@ -1,8 +1,8 @@
 #include "lst_model.h"
 
-lst_model::lst_model(const proxy_data& arg, QObject *parent) : QAbstractTableModel(parent)
+lst_model::lst_model(QObject *parent) : QAbstractTableModel(parent)
 {
-    model_data = arg;
+    model_data = proxy_data();
 }
 int lst_model::rowCount(const QModelIndex &parent) const
 {
@@ -12,17 +12,26 @@ int lst_model::rowCount(const QModelIndex &parent) const
 int lst_model::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 3;
+    return 5;
 }
 QVariant lst_model::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()){
     if (role == Qt::DisplayRole){
         if (index.column() == 0){
-            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_text());
         }
         if (index.column() == 1){
-            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_text());
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_start_data());
+        }
+        if (index.column() == 2){
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->today_cost());
+        }
+        if (index.column() == 3){
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->str_closed());
+        }
+        if (index.column() == 4){
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
         }
     }
     if (role ==  Qt::EditRole) {
@@ -50,9 +59,15 @@ QVariant lst_model::headerData(int section, Qt::Orientation orientation, int rol
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal){
         switch (section){
         case 0:
-            return QVariant("Фото");
+            return QVariant("Клиент");
         case 1:
-            return QVariant("Сведения");
+            return QVariant("Оставлено");
+        case 2:
+            return QVariant("Стоимость");
+        case 3:
+            return QVariant("Оплата");
+        case 4:
+            return QVariant("Фото");
         }
     }
     return QVariant();

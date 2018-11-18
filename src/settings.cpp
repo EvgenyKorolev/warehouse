@@ -1,4 +1,6 @@
 #include "settings.h"
+#include "functions.h"
+#include <QSqlRecord>
 
 settings::settings()
 {
@@ -38,11 +40,14 @@ settings::settings()
         }
     }
     QFile tester(db_dir + db_name);
-    if (!tester.exists()){ create_base();}
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(db_dir + db_name);
-    if(!db.open()){
-        QMessageBox::information(nullptr, "Внимание", "База данных не открывается");
+    if (!tester.exists()){
+        create_base();
+    } else {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(db_dir + db_name);
+        if(!db.open()){
+            QMessageBox::information(nullptr, "Внимание", "База данных не открывается");
+        }
     }
     QDir tmpd;
     if (!tmpd.exists(db_dir)){
@@ -77,11 +82,11 @@ void settings::create_base()
     QDir my_dir(db_dir);
     my_dir.mkpath(db_dir);
     my_dir.mkdir(image_dir);
-    QSqlDatabase temp_db = QSqlDatabase::addDatabase("QSQLITE");
-    temp_db.setDatabaseName(db_dir + db_name);
-    if(!temp_db.open()){ QMessageBox::information(nullptr, "Внимание", "База данных не открывается");}
-    QSqlQuery query;
-    QString prep = "CREATE TABLE persisted (kl_name TEXT NOT NULL, kl_surname TEXT NOT NULL, kl_fname TEXT NOT NULL,"
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(db_dir + db_name);
+    if(!db.open()){ QMessageBox::information(nullptr, "Внимание", "База данных не открывается");}
+    QSqlQuery query(db);
+    QString prep = "CREATE TABLE persisted(kl_name TEXT NOT NULL, kl_surname TEXT NOT NULL, kl_fname TEXT NOT NULL,"
                    "start_data INTEGER, pay_data INTEGER, info TEXT, cost INTEGER, "
                    "dop_cost INTEGER, many INTEGER, closed TEXT, uniq INTEGER UNIQUE NOT NULL,"
                    "foto_name TEXT UNIQUE, hash TEXT, inq INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL);";
@@ -92,5 +97,69 @@ void settings::create_base()
     if (!query.exec(prep)) {
         QMessageBox::information(nullptr, "Внимание", "База данных пуста и не удается создать таблицу hollydays");
     }
-    temp_db.close();
+}
+bool settings::db_execute(const QString& str_query, const QString& str_info)
+{
+    QSqlQuery query(db);
+    if (!query.exec(str_query)){
+        QMessageBox::information(nullptr, "Внимание",  str_info);
+        return false;
+    }
+    return true;
+}
+std::unique_ptr<persisted_object> settings::request_data(const QString& str_query)
+{
+    QSqlQuery query(db);
+    QSqlRecord rec;
+    if (!query.exec(str_query)){
+        return std::make_unique<persisted_object>(new persisted_object());
+    }
+    std::unique_ptr<persisted_object> ret = std::make_unique<persisted_object>(persisted_object());
+    query.first();
+    rec = query.record();
+    QDateTime pay_dat, start_dat;
+    start_dat.setMSecsSinceEpoch(query.value(rec.indexOf("start_data")).value<qint64>());
+    pay_dat.setMSecsSinceEpoch(query.value(rec.indexOf("pay_data")).value<qint64>());
+    ret->set_person(std::make_tuple(my::base64_minus(query.value(rec.indexOf("kl_name")).toString()), my::base64_minus(query.value(rec.indexOf("kl_surname")).toString()),
+                                    my::base64_minus(query.value(rec.indexOf("kl_fname")).toString())));
+    ret->set_start_data(pay_dat.date());
+    ret->set_pay_data(start_dat.date());
+    ret->set_info(my::base64_minus(query.value(rec.indexOf("info")).toString()));
+    ret->set_cost(query.value(rec.indexOf("cost")).toUInt());
+    ret->set_dop_cost(query.value(rec.indexOf("dop_cost")).toUInt());
+    ret->set_foto_name(my::base64_minus(query.value(rec.indexOf("foto_name")).toString()));
+    ret->set_hash(qint32(query.value(rec.indexOf("hash")).toULongLong()));
+    ret->set_many(query.value(rec.indexOf("many")).toUInt());
+    if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
+        ret->set_close();
+    } else ret->unset_close();
+    ret->set_uniq(query.value(rec.indexOf("hash")).toULongLong());
+    return ret;
+}
+bool settings::is_hollyday(const QDate&) const
+{
+    QSqlQuery query(db);
+    QSqlRecord rec;
+    if (!query.exec("SELECT * FROM persisted;")){
+        return false;
+    }
+    rec = query.record();
+    query.first();
+    QDateTime hol_dat;
+    if (query.value(rec.indexOf("hollyday")).value<qint64>() != 0) return true;
+    return false;
+}
+bool settings::add_hollyday(const QDate& arg)
+{
+    QDateTime hol_data(arg);
+    QString prep = "INSERT INTO hollydays(hollyday) VALUES ('" + QString::number(hol_data.toMSecsSinceEpoch()) + "');";
+            if (db_execute(prep, "Что-то не то с добавлением праздника в базу данных.")) return true;
+            return false;
+}
+bool settings::del_holliday(const QDate& arg)
+{
+    QDateTime hol_data(arg);
+    QString prep = "DELETE hollydays * WHERE hollyday ='" + QString::number(hol_data.toMSecsSinceEpoch()) + "';";
+    if (db_execute(prep, "Что-то не то с удалением праздника из базы данных.")) return true;
+    return false;
 }

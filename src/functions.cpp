@@ -35,20 +35,4 @@ QString my::base64_minus(const QString&& argx)
     QString arg(retar);
     return arg;
 }
-QString im_hash(const QImage& arg)
-{
-    QString ret{""};
-    qint32 hash{0};
-    for(int y{0}; y < arg.height(); y++)
-    {
-        for(int x{0}; x < arg.width(); x++)
-        {
-            QRgb pixel = arg.pixel(x,y);
-            hash += pixel;
-            hash += (hash << 10);
-            hash ^= (hash >> 6);
-        }
-    }
-    ret = QString::number(hash);
-    return ret;
-}
+

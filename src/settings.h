@@ -1,5 +1,6 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
+#include "persisted_object.h"
 #include <QString>
 #include <QSqlDatabase>
 #include <QList>
@@ -9,6 +10,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QSqlQuery>
+#include <memory>
 
 class settings
 {
@@ -21,8 +23,9 @@ public:
     bool add_hollyday(const QDate&);
     bool del_holliday(const QDate&);
 
+    bool db_execute(const QString& str_query, const QString& str_info);
+    std::unique_ptr<persisted_object> request_data(const QString& str_query);
     unsigned work_days(const QDate&) const;
-    void create_base();
     QSqlDatabase& get_db(){return db;}
     bool save_ini() const;
     QString get_main_ini() const {return  main_ini;}
@@ -34,6 +37,8 @@ public:
     void get_db_dir(const QString& arg){db_dir = arg;}
     void get_db_name(const QString& arg){db_name = arg;}
 private:
+    void create_base();
+
     settings();
     settings(const settings&);
     settings& operator=(const settings&);

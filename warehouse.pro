@@ -32,7 +32,8 @@ SOURCES += \
     src/lst_view.cpp \
     src/settings.cpp \
     src/proxy_data.cpp \
-    src/functions.cpp
+    src/functions.cpp \
+    src/editor_object.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -41,9 +42,13 @@ HEADERS += \
     src/lst_view.h \
     src/settings.h \
     src/proxy_data.h \
-    src/functions.h
+    src/functions.h \
+    src/editor_object.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    res.qrc
