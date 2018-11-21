@@ -22,6 +22,7 @@ public:
     bool is_hollyday(const QDate&) const;
     bool add_hollyday(const QDate&);
     bool del_holliday(const QDate&);
+    std::shared_ptr<QVector<QDate>> lst_holliday();
 
     bool db_execute(const QString& str_query, const QString& str_info);
     std::unique_ptr<persisted_object> request_data(const QString& str_query);
@@ -48,7 +49,7 @@ private:
     QString db_dir{""};
     QString db_name{""};
     QSqlDatabase db;
-    QList<QDate> hollidays;
+    std::shared_ptr<QVector<QDate>> hollidays;
 };
 
 #endif // SETTINGS_H

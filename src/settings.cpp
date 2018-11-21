@@ -53,6 +53,16 @@ settings::settings()
     if (!tmpd.exists(db_dir)){
         QMessageBox::information(nullptr, "Внимание", "Невозможно найти или сохранить путь к директории с данными");
     }
+    QSqlQuery query(db);
+    if (query.exec("SELECT * FROM persisted;")){
+        QSqlRecord rec;
+        QDateTime hol_dat;
+        rec = query.record();
+        while (query.next()){
+            hol_dat.setMSecsSinceEpoch(query.value(rec.indexOf("hollyday")).value<qint64>());
+            hollidays->append(QDate(hol_dat.date()));
+        }
+    } else hollidays = std::make_shared<QVector<QDate>>(QVector<QDate>());
 }
 bool settings::save_ini() const
 {
@@ -88,7 +98,7 @@ void settings::create_base()
     QSqlQuery query(db);
     QString prep = "CREATE TABLE persisted(kl_name TEXT, kl_surname TEXT, kl_fname TEXT,"
                    "start_data INTEGER, pay_data INTEGER, info TEXT, cost INTEGER, "
-                   "dop_cost INTEGER, many INTEGER, closed TEXT, uniq INTEGER UNIQUE NOT NULL,"
+                   "dop_cost INTEGER, many INTEGER, closed TEXT, uniq TEXT UNIQUE NOT NULL,"
                    "foto_name TEXT, hash TEXT, inq INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL);";
     if (!query.exec(prep)) {
         QMessageBox::information(nullptr, "Внимание", "База данных пуста и не удается создать таблицу persisted");
@@ -133,33 +143,34 @@ std::unique_ptr<persisted_object> settings::request_data(const QString& str_quer
     if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
         ret->set_close();
     } else ret->unset_close();
-    ret->set_uniq(query.value(rec.indexOf("hash")).toULongLong());
+    ret->set_uniq(query.value(rec.indexOf("hash")).toString());
     return ret;
 }
-bool settings::is_hollyday(const QDate&) const
+bool settings::is_hollyday(const QDate& arg) const
 {
-    QSqlQuery query(db);
-    QSqlRecord rec;
-    if (!query.exec("SELECT * FROM persisted;")){
-        return false;
-    }
-    rec = query.record();
-    query.first();
-    QDateTime hol_dat;
-    if (query.value(rec.indexOf("hollyday")).value<qint64>() != 0) return true;
-    return false;
+    return hollidays->indexOf(arg) > 0;
+}
+std::shared_ptr<QVector<QDate>> settings::lst_holliday()
+{
+    return hollidays;
 }
 bool settings::add_hollyday(const QDate& arg)
 {
     QDateTime hol_data(arg);
     QString prep = "INSERT INTO hollydays(hollyday) VALUES ('" + QString::number(hol_data.toMSecsSinceEpoch()) + "');";
-            if (db_execute(prep, "Что-то не то с добавлением праздника в базу данных.")) return true;
+            if (db_execute(prep, "Что-то не то с добавлением праздника в базу данных.")){
+                hollidays->append(arg);
+                return true;
+            }
             return false;
 }
 bool settings::del_holliday(const QDate& arg)
 {
     QDateTime hol_data(arg);
     QString prep = "DELETE hollydays * WHERE hollyday ='" + QString::number(hol_data.toMSecsSinceEpoch()) + "';";
-    if (db_execute(prep, "Что-то не то с удалением праздника из базы данных.")) return true;
+    if (db_execute(prep, "Что-то не то с удалением праздника из базы данных.")) {
+        hollidays->remove(hollidays->indexOf(arg));
+        return true;
+    }
     return false;
 }

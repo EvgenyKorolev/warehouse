@@ -54,7 +54,6 @@ void lst_view::slot_add()
         model()->setData(model()->index(i, 0, QModelIndex()), QVariant::fromValue(tmpl), Qt::EditRole);
     }
     delete edob;
-    model()->layoutChanged();
 }
 void lst_view::slot_edit()
 {

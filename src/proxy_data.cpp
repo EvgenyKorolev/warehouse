@@ -30,7 +30,7 @@ proxy_data::proxy_data()
         if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
             ret->set_close();
         } else ret->unset_close();
-        ret->set_uniq(query.value(rec.indexOf("hash")).toULongLong());
+        ret->set_uniq(query.value(rec.indexOf("hash")).toString());
         data.append(ret);
     }
 }
@@ -52,7 +52,7 @@ void proxy_data::append(std::shared_ptr<persisted_object> arg)
             my::base64_plus(std::get<2>(arg->get_person())) + "', '" + QString::number(start_data.toMSecsSinceEpoch()) + "', '" +
             QString::number(pay_data.toMSecsSinceEpoch()) + "', '" + my::base64_plus(arg->get_info()) + "', '" + QString::number(arg->get_cost()) + "', '" +
             QString::number(arg->get_dop_cost()) + "', '" + QString::number(arg->get_many()) + "', '" + closed + "', '" +
-            QString::number(arg->get_uniq())  + "', '" + my::base64_plus(arg->get_foto_name()) + "', '" + QString::number(arg->get_hash()) + "');";
+            arg->get_uniq()  + "', '" + my::base64_plus(arg->get_foto_name()) + "', '" + QString::number(arg->get_hash()) + "');";
             if (tmps.db_execute(prep, "Что-то не то с добавлением записи в базу данных.")) data.append(arg);
 };
 void proxy_data::insert(std::shared_ptr<persisted_object> arg)
@@ -68,7 +68,7 @@ void proxy_data::insert(std::shared_ptr<persisted_object> arg)
             my::base64_plus(arg->get_info()) + "', cost = '" + QString::number(arg->get_cost()) + "', dop_cost = '" +
             QString::number(arg->get_dop_cost()) + "', many = '" + QString::number(arg->get_many()) + "', closed = '" + closed + "', foto_name = '" +
             my::base64_plus(arg->get_foto_name()) + "', hash = '" +
-            QString::number(arg->get_hash()) + "' WHERE uniq ='" + QString::number(arg->get_uniq()) + "';";
+            QString::number(arg->get_hash()) + "' WHERE uniq ='" + arg->get_uniq() + "';";
     if (tmps.db_execute(prep, "Что-то не то с обновлением записи в базе данных.")){
         auto it = data.begin();
         while (it != data.end()){
@@ -83,12 +83,16 @@ void proxy_data::insert(std::shared_ptr<persisted_object> arg)
 void proxy_data::insert(std::size_t row, std::shared_ptr<persisted_object> arg)
 {
     Q_UNUSED(row)
+    if (data.at(static_cast<int>(row))->get_uniq() != arg->get_uniq()){
+        QMessageBox::information(nullptr, "Внимание", "При внесении изменений произошел конфликт индексов");
+        return;
+    }
     insert(arg);
 }
 void proxy_data::del(std::shared_ptr<persisted_object> arg)
 {
     settings& tmps = settings::getInatance();
-    QString prep = "DELETE persisted * WHERE uniq ='" + QString::number(arg->get_uniq()) + "';";
+    QString prep = "DELETE persisted * WHERE uniq ='" + arg->get_uniq() + "';";
     if (tmps.db_execute(prep, "Что-то не то с удалением записи из базы данных.")){
         auto it = data.begin();
         while (it != data.end()){

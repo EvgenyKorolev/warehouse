@@ -13,11 +13,11 @@ public:
     persisted_object() : person{std::make_tuple("", "", "")},
         start_data{QDate()}, pay_data{QDate()}, info{""}, cost{0},
         dop_cost{0}, many{0}, closed{false}, foto{""}, hash{0}, nll(true){
-        uniq = QDateTime::currentSecsSinceEpoch();
+        uniq = QString::number(QDateTime::currentSecsSinceEpoch());
         std::random_device gensc;
         std::mt19937 gen;
         gen.seed(gensc());
-        uniq = uniq | static_cast<qint64>(gen());
+        uniq += QString::number(gen());
     }
     ~persisted_object() = default;
     persisted_object(const persisted_object&) = default;
@@ -61,8 +61,8 @@ public:
     void unset_close(){closed = false;}
     void set_close(){closed = true;}
     void close();
-    size_t get_uniq() const {return uniq;}
-    void set_uniq(size_t arg) {uniq = arg;}
+    QString get_uniq() const {return uniq;}
+    void set_uniq(const QString& arg) {uniq = arg;}
 private:
     std::tuple<QString, QString, QString> person; // Данные клиента
     QDate start_data; // Дата начала хранения
@@ -72,7 +72,7 @@ private:
     unsigned dop_cost;   // Стоимость допуслуг
     unsigned many;  // полная стоимость на моммент закрытия
     bool closed;  // Забрали ли объект
-    qint64 uniq;  // Уникальный номер
+    QString uniq;  // Уникальный номер
     QString foto; // файл фотографии
     qint32 hash; // Хэш фотографии
     bool nll;

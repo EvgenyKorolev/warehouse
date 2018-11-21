@@ -86,6 +86,7 @@ unsigned persisted_object::today_cost() const
     settings& tmps = settings::getInatance();
     unsigned ret{0};
     QDate tmp = start_data;
+    if (closed) return many;
     while (tmp <= QDate::currentDate()){
         if (!tmps.is_hollyday(tmp) && tmp.dayOfWeek() != 6 && tmp.dayOfWeek() != 7) ret += cost;
         tmp = tmp.addDays(1);
