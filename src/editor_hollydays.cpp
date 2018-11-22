@@ -7,6 +7,7 @@
 #include <QDateEdit>
 #include <QLabel>
 #include <QMenu>
+#include <QRegExp>
 #include "settings.h"
 editor_hollydays::editor_hollydays(QWidget* par) : QDialog (par)
 {
@@ -15,15 +16,11 @@ editor_hollydays::editor_hollydays(QWidget* par) : QDialog (par)
     this->setWindowIcon(QIcon(":/images/w.png"));
     QGridLayout* main_lay = new QGridLayout();
     model = new hollydays_model();
-    view = new hollydays_view();
+    view = new hollydays_view(this);
     QLabel* lab = new QLabel();
     lab->setText("Список праздников:");
- //   QSortFilterProxyModel* prmod = new QSortFilterProxyModel();
-    prmod->setSourceModel(model);
-    prmod->setDynamicSortFilter(true);
-    view->setModel(prmod);
     years = new QComboBox();
-    years->addItem("Все");
+    years->addItem("Все годы");
     if (settings::getInatance().lst_holliday()->size() > 0){
         QDate start = settings::getInatance().lst_holliday()->front();
         QDate end = settings::getInatance().lst_holliday()->last();
@@ -36,7 +33,9 @@ editor_hollydays::editor_hollydays(QWidget* par) : QDialog (par)
         } while (start <= end);
 
     }
+    QObject::connect(years, SIGNAL(currentTextChanged(const QString&)), this, SLOT(slot_filtr()));
 
+    slot_filtr();
     main_lay->addWidget(lab, 0, 0);
     main_lay->addWidget(years, 1, 0);
     main_lay->addWidget(view, 2, 0);
@@ -50,10 +49,27 @@ editor_hollydays::editor_hollydays(QWidget* par) : QDialog (par)
 }
 void editor_hollydays::slot_filtr()
 {
-
+    QRegExp rexp;
+    rexp.setPatternSyntax(QRegExp::Wildcard);
+    QString str{""};
+    if (years->currentText() == "Все годы"){
+        str = "*";
+    } else {
+        str = "*" + years->currentText().right(8).left(4);
+    }
+    rexp.setPattern(str);
+    QSortFilterProxyModel* prmod = new QSortFilterProxyModel();
+    view->setModel(prmod);
+    prmod->setFilterKeyColumn(0);
+    prmod->setFilterRegExp(rexp);
+    prmod->setSourceModel(model);
+    view->scrollToBottom();
 }
 // Представление для дат ------------------------------------------------------------------------------------------------
-//hollydays_view::hollydays_view(QWidget *par) : QListView (par){}
+hollydays_view::hollydays_view(editor_hollydays* call, QWidget *par) : QListView (par)
+{
+    call_back = call;
+}
 void hollydays_view::mousePressEvent(QMouseEvent *arg)
 {
     if ((arg->buttons() == Qt::RightButton)){
@@ -88,12 +104,13 @@ void hollydays_view::slot_add()
     if (eddat->exec() == QDialog::Accepted){
         model()->setData(QModelIndex(), QVariant::fromValue(eddat->result()), Qt::EditRole);
     }
+    call_back->slot_filtr();
     delete eddat;
 }
 void hollydays_view::slot_del()
 {
-    model()->removeRow(this->indexAt(curs).row(),QModelIndex());
-    model()->layoutChanged();
+    model()->removeRow(this->indexAt(curs).row(), QModelIndex());
+    call_back->slot_filtr();
 }
 void hollydays_view::slot_filtr()
 {
@@ -113,21 +130,22 @@ QVariant hollydays_model::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()){
     if (role == Qt::DisplayRole){
+        if (index.row() < model_data->size()){
             return QVariant::fromValue(model_data->at(index.row()).toString("d.MMMM.yyyy"));
+        }
     }
     if (role ==  Qt::EditRole) {
-        return QVariant::fromValue(model_data->at(index.row()));
-
+        if (index.row() < model_data->size()){
+                    return QVariant::fromValue(model_data->at(index.row()));
+        }
     }
-    }
-    return QVariant();
+    } return QVariant();
 }
 bool hollydays_model::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     Q_UNUSED(index)
     if (role == Qt::EditRole){
             settings::getInatance().add_hollyday(value.value<QDate>());
-            layoutChanged();
             return true;
     }
     return false;
@@ -145,7 +163,7 @@ Qt::ItemFlags hollydays_model::flags(const QModelIndex &index) const
     Qt::ItemFlags flags = QAbstractListModel::flags(index);
     if( index.isValid() ) {
             flags |= Qt::ItemIsSelectable;
-    }
+    } else flags |= Qt::ItemIsEnabled;
     return flags;
 }
 bool hollydays_model::removeRows(int row, int count, const QModelIndex & parent)

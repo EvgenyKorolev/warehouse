@@ -27,7 +27,7 @@ class hollydays_view : public QListView
 {
     Q_OBJECT
 public:
-    hollydays_view(QWidget *par = nullptr) : QListView (par){}
+    hollydays_view(editor_hollydays* call, QWidget *par = nullptr);
     void mousePressEvent(QMouseEvent *arg);
     void mouseDoubleClickEvent(QMouseEvent* arg);
 public slots:
@@ -35,6 +35,7 @@ public slots:
     void slot_del();
     void slot_filtr();
 private:
+    editor_hollydays* call_back;
     QPoint curs;   // Запоминаем местоположение курсора
 };
 // Модель для дат
