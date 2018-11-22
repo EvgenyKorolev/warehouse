@@ -1,6 +1,13 @@
-#include <QHeaderView>
 #include "mainwindow.h"
 #include "yes_no.h"
+#include "lst_view.h"
+#include "lst_model.h"
+#include "editor_hollydays.h"
+#include <QCloseEvent>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QSortFilterProxyModel>
+#include <QHeaderView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton* about_push = new QPushButton("О программе");
     view = new lst_view();
     QObject::connect(add_push, SIGNAL(clicked()), view, SLOT(slot_add()));
+    QObject::connect(hollyday_push, SIGNAL(clicked()), this, SLOT(slot_hol()));
     view->setColumnWidth(0, 200);
     view->setColumnWidth(1, 200);
     view->setColumnWidth(2, 200);
@@ -29,11 +37,11 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSortingEnabled(true);
     model = new lst_model();
     QSortFilterProxyModel* smod = new QSortFilterProxyModel();
+    view->setModel(smod);
     smod->setFilterKeyColumn(3);
     smod->setDynamicSortFilter(true);
     smod->setSourceModel(model);
     smod->setFilterFixedString("-");
-    view->setModel(smod);
 
     main_layout->addWidget(add_push, 0, 0);
     main_layout->addWidget(sort_push, 0, 1);
@@ -58,4 +66,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     delete pmbx;
     event->ignore();
+}
+void MainWindow::slot_hol()
+{
+    editor_hollydays* edhol = new editor_hollydays();
+    if(edhol->exec() == QDialog::Accepted){
+
+    }
 }

@@ -1,5 +1,6 @@
 #include "settings.h"
 #include "functions.h"
+#include <algorithm>
 #include <QSqlRecord>
 
 settings::settings()
@@ -54,15 +55,17 @@ settings::settings()
         QMessageBox::information(nullptr, "Внимание", "Невозможно найти или сохранить путь к директории с данными");
     }
     QSqlQuery query(db);
-    if (query.exec("SELECT * FROM persisted;")){
+    if (query.exec("SELECT * FROM hollydays;")){
         QSqlRecord rec;
         QDateTime hol_dat;
         rec = query.record();
+        hollidays = std::make_shared<QVector<QDate>>(QVector<QDate>());
         while (query.next()){
             hol_dat.setMSecsSinceEpoch(query.value(rec.indexOf("hollyday")).value<qint64>());
-            hollidays->append(QDate(hol_dat.date()));
+            hollidays->append(hol_dat.date());
         }
     } else hollidays = std::make_shared<QVector<QDate>>(QVector<QDate>());
+    std::sort(hollidays->begin(), hollidays->end());
 }
 bool settings::save_ini() const
 {
@@ -160,6 +163,7 @@ bool settings::add_hollyday(const QDate& arg)
     QString prep = "INSERT INTO hollydays(hollyday) VALUES ('" + QString::number(hol_data.toMSecsSinceEpoch()) + "');";
             if (db_execute(prep, "Что-то не то с добавлением праздника в базу данных.")){
                 hollidays->append(arg);
+                std::sort(hollidays->begin(), hollidays->end());
                 return true;
             }
             return false;
@@ -167,7 +171,7 @@ bool settings::add_hollyday(const QDate& arg)
 bool settings::del_holliday(const QDate& arg)
 {
     QDateTime hol_data(arg);
-    QString prep = "DELETE hollydays * WHERE hollyday ='" + QString::number(hol_data.toMSecsSinceEpoch()) + "';";
+    QString prep = "DELETE FROM hollydays WHERE hollyday ='" + QString::number(hol_data.toMSecsSinceEpoch()) + "';";
     if (db_execute(prep, "Что-то не то с удалением праздника из базы данных.")) {
         hollidays->remove(hollidays->indexOf(arg));
         return true;

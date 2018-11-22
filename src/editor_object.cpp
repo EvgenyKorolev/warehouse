@@ -1,5 +1,11 @@
 #include "editor_object.h"
 #include <QGridLayout>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QDateEdit>
+#include <QTextEdit>
+#include <QSpinBox>
+#include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QLabel>
 editor_object::editor_object(QWidget* par) : QDialog(par)

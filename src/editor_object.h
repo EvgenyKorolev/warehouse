@@ -3,13 +3,12 @@
 #include "persisted_object.h"
 #include <QObject>
 #include <QDialog>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QDateEdit>
-#include <QTextEdit>
-#include <QSpinBox>
-#include <QGraphicsScene>
-
+class QLineEdit;
+class QGraphicsScene;
+class QGraphicsView;
+class QTextEdit;
+class QSpinBox;
+class QDateEdit;
 class editor_object : public QDialog
 {
     Q_OBJECT

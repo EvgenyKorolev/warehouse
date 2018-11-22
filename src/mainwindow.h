@@ -1,12 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include "lst_view.h"
-#include "lst_model.h"
-#include <QCloseEvent>
 #include <QMainWindow>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QSortFilterProxyModel>
+class lst_model;
+class lst_view;
+class QCloseEvent;
 
 class MainWindow : public QMainWindow
 {
@@ -15,6 +12,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void closeEvent(QCloseEvent *event);
+public slots:
+    void slot_hol();
 private:
     lst_view* view;
     lst_model* model;
