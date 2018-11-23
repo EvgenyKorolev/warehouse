@@ -99,3 +99,7 @@ QString persisted_object::str_closed()
     if (is_closed()) return "Да";
     return "-";
 }
+bool persisted_object::add_photo(const QImage& arg)
+{
+
+}

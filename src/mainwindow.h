@@ -4,7 +4,7 @@
 class lst_model;
 class lst_view;
 class QCloseEvent;
-
+class QLabel;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -14,9 +14,12 @@ public:
     void closeEvent(QCloseEvent *event);
 public slots:
     void slot_hol();
+    void slot_filtr();
+    void slot_about();
 private:
     lst_view* view;
     lst_model* model;
+    QLabel* PicLabel;
 };
 
 #endif // MAINWINDOW_H

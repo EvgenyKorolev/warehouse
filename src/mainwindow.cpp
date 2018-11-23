@@ -5,9 +5,12 @@
 #include "editor_hollydays.h"
 #include <QCloseEvent>
 #include <QPushButton>
-#include <QGridLayout>
 #include <QSortFilterProxyModel>
+#include <QDockWidget>
 #include <QHeaderView>
+#include <QLabel>
+#include <QToolBar>
+#include <QAction>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,20 +18,26 @@ MainWindow::MainWindow(QWidget *parent)
     this->resize(900, 600);
     this->setWindowTitle("Учёт и хранение");
     this->setWindowIcon(QIcon(":/images/w.png"));
-    QWidget* central_widget = new QWidget();
-    this->setCentralWidget(central_widget);
-    QGridLayout* main_layout = new QGridLayout(central_widget);
-    central_widget->setLayout(main_layout);
 
-    QPushButton* add_push = new QPushButton("Добавить запись");
-    QPushButton* sort_push = new QPushButton("Сортировать");
-    QPushButton* serch_push = new QPushButton("Поиск");
-    QPushButton* reset_push = new QPushButton("Сброс");
-    QPushButton* hollyday_push = new QPushButton("Праздники");
-    QPushButton* about_push = new QPushButton("О программе");
-    view = new lst_view();
-    QObject::connect(add_push, SIGNAL(clicked()), view, SLOT(slot_add()));
-    QObject::connect(hollyday_push, SIGNAL(clicked()), this, SLOT(slot_hol()));
+    QToolBar* main_tb = new QToolBar(this);
+    this->addToolBar(Qt::ToolBarArea::TopToolBarArea, main_tb);
+    QAction* add_push = new QAction("Добавить запись");
+    QAction* sort_push = new QAction("Сортировать");
+    QAction* serch_push = new QAction("Поиск");
+    QAction* reset_push = new QAction("Сброс");
+    QAction* hollyday_push = new QAction("Праздники");
+    QAction* about_push = new QAction("О программе");
+
+    main_tb->addAction(add_push);
+    main_tb->addAction(sort_push);
+    main_tb->addAction(serch_push);
+    main_tb->addAction(reset_push);
+    main_tb->addAction(hollyday_push);
+    main_tb->addAction(about_push);
+    view = new lst_view(this);
+    QObject::connect(add_push, SIGNAL(triggered(bool)), view, SLOT(slot_add()));
+    QObject::connect(hollyday_push, SIGNAL(triggered(bool)), this, SLOT(slot_hol()));
+    QObject::connect(about_push, SIGNAL(triggered(bool)), this, SLOT(slot_about()));
     view->setColumnWidth(0, 200);
     view->setColumnWidth(1, 200);
     view->setColumnWidth(2, 200);
@@ -36,21 +45,18 @@ MainWindow::MainWindow(QWidget *parent)
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
     model = new lst_model();
-    QSortFilterProxyModel* smod = new QSortFilterProxyModel();
-    view->setModel(smod);
-    smod->setFilterKeyColumn(3);
-    smod->setDynamicSortFilter(true);
-    smod->setSourceModel(model);
-    smod->setFilterFixedString("-");
+    slot_filtr();
 
-    main_layout->addWidget(add_push, 0, 0);
-    main_layout->addWidget(sort_push, 0, 1);
-    main_layout->addWidget(serch_push, 0, 2);
-    main_layout->addWidget(reset_push, 1, 0);
-    main_layout->addWidget(hollyday_push, 1, 1);
-    main_layout->addWidget(about_push, 1, 2);
-    main_layout->addWidget(view, 2, 0, 1, 3)
+    PicLabel = new QLabel();
 
+    // Для представления
+    QDockWidget *view_area = new QDockWidget("Клиеты", this);
+    view_area->setWidget(view);
+    view_area->setAllowedAreas(Qt::LeftDockWidgetArea);
+    view_area->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    addDockWidget(Qt::LeftDockWidgetArea, view_area);
+    view_area->setMinimumWidth(450);
+    this->setCentralWidget(PicLabel);
 ;}
 MainWindow::~MainWindow()
 {
@@ -73,4 +79,28 @@ void MainWindow::slot_hol()
     if(edhol->exec() == QDialog::Accepted){
 
     }
+}
+void MainWindow::slot_filtr()
+{
+    QSortFilterProxyModel* smod = new QSortFilterProxyModel();
+    view->setModel(smod);
+    smod->setFilterKeyColumn(3);
+    smod->setDynamicSortFilter(true);
+    smod->setSourceModel(model);
+    smod->setFilterFixedString("-");
+    view->setColumnHidden(0, true);
+}
+void MainWindow::slot_about()
+{
+    QMessageBox about;
+    about.setText("<table><tr><th>"
+                  "<img src=\":/images/w2.png\"> </th> <th><br><br>Программа для учёта хранимых объектов <br>"
+                  "Программу разработал Евгений Королёв <br> "
+                  "Cайт: <a href = 'http://kyrych.ru'>kyrych.ru</a><br> "
+                  "E-mail: <a href = 'mailto:root@kyrych.ru'>root@kyrych.ru</a> <br> "
+                  "XMPP: kyrych@xmpp.ru "
+                  "</th></tr></table>");
+    about.setWindowIcon(QIcon(":/images/w.png"));
+    about.setWindowTitle("О программе:");
+    about.exec();
 }

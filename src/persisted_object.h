@@ -54,6 +54,7 @@ public:
     unsigned today_cost() const;
     QString str_closed();
 
+    bool add_photo(const QImage& arg);
     qint32 im_hash(const QImage& arg) const;
     void set_many(unsigned arg){cost = arg;}
     unsigned get_many() const{return cost;}

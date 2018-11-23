@@ -31,6 +31,14 @@ void editor_object::init()
     ed_info->setFixedHeight(100);
     cost = new QSpinBox();
     dop_cost = new QSpinBox();
+    cost->setSuffix(" руб.");
+    dop_cost->setSuffix(" руб.");
+    cost->setMinimum(0);
+    cost->setMaximum(1000000000);
+    dop_cost->setMinimum(0);
+    dop_cost->setMaximum(1000000000);
+
+
     QPushButton* push_ok = new QPushButton("Готово");
     QObject::connect(push_ok, SIGNAL(clicked()), this, SLOT(slot_save()));
     QPushButton* push_cancel = new QPushButton("Отмена");
@@ -100,12 +108,10 @@ void editor_object::slot_save()
 {
     data.set_person(std::make_tuple(ed_name->text(), ed_surname->text(), ed_fname->text()));
     data.set_start_data(ed_start_data->date());
- //   data.set_pay_data();
     data.set_info(ed_info->toPlainText());
     data.set_cost(static_cast<unsigned>(cost->value()));
     data.set_dop_cost(static_cast<unsigned>(dop_cost->value()));
- //   data.set_foto_name(const QString& arg);
- //   data.set_hash(const QString& arg);
+    data.add_photo(actual_img);
     emit accept();
 }
 persisted_object editor_object::result()

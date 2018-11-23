@@ -21,17 +21,18 @@ public slots:
     void slot_save();
 private:
     void init();
-    QLineEdit* ed_name;
-    QLineEdit* ed_surname;
-    QLineEdit* ed_fname;
-    QDateEdit* ed_start_data;
-    QTextEdit* ed_info;
-    QSpinBox* cost;
-    QSpinBox* dop_cost;
-    QGraphicsScene* main_scene;
-    QGraphicsView* main_view;
-    QPixmap actual_img;
-    persisted_object data;
+    QLineEdit* ed_name;         // Имя
+    QLineEdit* ed_surname;      // Фамилия
+    QLineEdit* ed_fname;        // Отчество
+    QDateEdit* ed_start_data;   // Дата сдачи на хранение
+    QTextEdit* ed_info;         // Доп. информация
+    QSpinBox* cost;             // Стоимость в сутки
+    QSpinBox* dop_cost;         // Стоимость дополнительных услуг
+    QImage actual_img;         // Фотография
+
+    QGraphicsScene* main_scene; // Сцена для фото
+    QGraphicsView* main_view;   // Вьюха для фото
+    persisted_object data;      // Внутренний объект
 };
 
 #endif // EDITOR_OBJECT_H

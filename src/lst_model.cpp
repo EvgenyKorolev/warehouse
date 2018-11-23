@@ -12,14 +12,14 @@ int lst_model::rowCount(const QModelIndex &parent) const
 int lst_model::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 5;
+    return 4;
 }
 QVariant lst_model::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()){
     if (role == Qt::DisplayRole){
         if (index.column() == 0){
-            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_text());
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->str_closed());
         }
         if (index.column() == 1){
             return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_start_data());
@@ -28,7 +28,7 @@ QVariant lst_model::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->today_cost());
         }
         if (index.column() == 3){
-            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->str_closed());
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_text());
         }
         if (index.column() == 4){
             return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
@@ -59,13 +59,13 @@ QVariant lst_model::headerData(int section, Qt::Orientation orientation, int rol
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal){
         switch (section){
         case 0:
-            return QVariant("Клиент");
+            return QVariant("Оплата");
         case 1:
             return QVariant("Оставлено");
         case 2:
             return QVariant("Стоимость");
         case 3:
-            return QVariant("Оплата");
+            return QVariant("Клиент");
         case 4:
             return QVariant("Фото");
         }

@@ -1,8 +1,13 @@
 #include "lst_view.h"
 #include "editor_object.h"
+#include "mainwindow.h"
+#include <QMessageBox>
 #include <QMenu>
 
-lst_view::lst_view(QWidget *par) : QTableView (par){}
+lst_view::lst_view(MainWindow *arg, QWidget *par) : QTableView (par)
+{
+    this->par = arg;
+}
 void lst_view::mousePressEvent(QMouseEvent *arg)
 {
     if ((arg->buttons() == Qt::RightButton)){
@@ -54,6 +59,7 @@ void lst_view::slot_add()
         model()->setData(model()->index(i, 0, QModelIndex()), QVariant::fromValue(tmpl), Qt::EditRole);
     }
     delete edob;
+    par->slot_filtr();
 }
 void lst_view::slot_edit()
 {
