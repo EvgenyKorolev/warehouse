@@ -34,18 +34,4 @@ private:
     QGraphicsView* main_view;   // Вьюха для фото
     persisted_object data;      // Внутренний объект
 };
-
 #endif // EDITOR_OBJECT_H
-
-
-//std::tuple<QString, QString, QString> person; // Данные клиента
-//QDate start_data; // Дата начала хранения
-//QDate pay_data; // Дата окончания хранения (оплаты)
-//QString info;   // Дополнительная информация
-//unsigned cost;  // Стоимость в сутки
-//unsigned dop_cost;   // Стоимость допуслуг
-//unsigned many;
-//bool closed;
-//size_t uniq;
-//QString foto; // файл фотографии
-//qint32 hash; // Хэш фотографии

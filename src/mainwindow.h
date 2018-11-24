@@ -16,6 +16,7 @@ public slots:
     void slot_hol();
     void slot_def_filtr();
     void slot_about();
+    void slot_set_pic();
 private:
     lst_view* view;
     lst_model* model;

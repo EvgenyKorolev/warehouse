@@ -2,12 +2,15 @@
 #include "yes_no.h"
 #include "lst_view.h"
 #include "lst_model.h"
+#include "delegats.h"
 #include "editor_hollydays.h"
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
+#include <QAbstractItemView>
 #include <QDockWidget>
 #include <QHeaderView>
+#include <QPixmap>
 #include <QLabel>
 #include <QToolBar>
 #include <QAction>
@@ -45,11 +48,15 @@ MainWindow::MainWindow(QWidget *parent)
     view->setColumnWidth(3, 50);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
+    view->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    view->setSelectionBehavior(QAbstractItemView::SelectRows);
     model = new lst_model();
+    view->setItemDelegateForColumn(3, new show_delegat());
+    view->setItemDelegateForColumn(1, new show_delegat());
     slot_def_filtr();
-
     PicLabel = new QLabel();
-
+    connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            this, SLOT(slot_set_pic()));
     // Для представления
     QDockWidget *view_area = new QDockWidget("Клиеты", this);
     view_area->setWidget(view);
@@ -104,4 +111,9 @@ void MainWindow::slot_about()
     about.setWindowIcon(QIcon(":/images/w.png"));
     about.setWindowTitle("О программе:");
     about.exec();
+}
+void MainWindow::slot_set_pic()
+{
+    QModelIndex arg = view->currentIndex();
+    PicLabel->setPixmap(QPixmap::fromImage(model->data(model->index(arg.row(), 4)).value<QImage>()));
 }

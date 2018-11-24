@@ -36,7 +36,8 @@ SOURCES += \
     src/editor_object.cpp \
     src/editor_hollydays.cpp \
     src/filtr.cpp \
-    src/yes_no.cpp
+    src/yes_no.cpp \
+    src/delegats.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS += \
     src/editor_object.h \
     src/editor_hollydays.h \
     src/filtr.h \
-    src/yes_no.h
+    src/yes_no.h \
+    src/delegats.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
