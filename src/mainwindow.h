@@ -14,7 +14,7 @@ public:
     void closeEvent(QCloseEvent *event);
 public slots:
     void slot_hol();
-    void slot_filtr();
+    void slot_def_filtr();
     void slot_about();
 private:
     lst_view* view;

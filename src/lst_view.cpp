@@ -61,7 +61,7 @@ void lst_view::slot_add()
         model()->setData(model()->index(i, 0, QModelIndex()), QVariant::fromValue(tmpl), Qt::EditRole);
     }
     delete edob;
-    par->slot_filtr();
+    par->slot_def_filtr();
 }
 void lst_view::slot_edit()
 {
@@ -71,7 +71,7 @@ void lst_view::slot_edit()
         model()->setData(model()->index(i, 0, QModelIndex()), QVariant::fromValue(std::make_shared<persisted_object>(edob->result())), Qt::EditRole);
     }
     delete edob;
-    par->slot_filtr();
+    par->slot_def_filtr();
 }
 void lst_view::slot_del()
 {
@@ -81,7 +81,7 @@ void lst_view::slot_del()
        return;
     }
     delete pmbx;
-    par->slot_filtr();
+    par->slot_def_filtr();
 }
 void lst_view::slot_filtr()
 {

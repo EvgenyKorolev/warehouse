@@ -30,7 +30,7 @@ proxy_data::proxy_data()
         if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
             ret->set_close();
         } else ret->unset_close();
-        ret->set_uniq(query.value(rec.indexOf("hash")).toString());
+        ret->set_uniq(query.value(rec.indexOf("uniq")).toString());
         data.append(ret);
     }
 }
@@ -92,7 +92,7 @@ void proxy_data::insert(std::size_t row, std::shared_ptr<persisted_object> arg)
 void proxy_data::del(std::shared_ptr<persisted_object> arg)
 {
     settings& tmps = settings::getInatance();
-    QString prep = "DELETE persisted * WHERE uniq ='" + arg->get_uniq() + "';";
+    QString prep = "DELETE FROM persisted WHERE uniq ='" + arg->get_uniq() + "';";
     if (tmps.db_execute(prep, "Что-то не то с удалением записи из базы данных.")){
         auto it = data.begin();
         while (it != data.end()){

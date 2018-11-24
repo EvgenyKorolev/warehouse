@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(add_push, SIGNAL(triggered(bool)), view, SLOT(slot_add()));
     QObject::connect(hollyday_push, SIGNAL(triggered(bool)), this, SLOT(slot_hol()));
     QObject::connect(about_push, SIGNAL(triggered(bool)), this, SLOT(slot_about()));
+    QObject::connect(reset_push, SIGNAL(triggered(bool)), this, SLOT(slot_def_filtr()));
     view->setColumnWidth(0, 200);
     view->setColumnWidth(1, 200);
     view->setColumnWidth(2, 200);
@@ -45,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
     model = new lst_model();
-    slot_filtr();
+    slot_def_filtr();
 
     PicLabel = new QLabel();
 
@@ -80,7 +81,7 @@ void MainWindow::slot_hol()
 
     }
 }
-void MainWindow::slot_filtr()
+void MainWindow::slot_def_filtr()
 {
     QSortFilterProxyModel* smod = new QSortFilterProxyModel();
     view->setModel(smod);

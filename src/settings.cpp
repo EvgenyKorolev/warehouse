@@ -146,7 +146,7 @@ std::unique_ptr<persisted_object> settings::request_data(const QString& str_quer
     if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
         ret->set_close();
     } else ret->unset_close();
-    ret->set_uniq(query.value(rec.indexOf("hash")).toString());
+    ret->set_uniq(query.value(rec.indexOf("uniq")).toString());
     return ret;
 }
 bool settings::is_hollyday(const QDate& arg) const
