@@ -87,7 +87,7 @@ void MainWindow::slot_filtr()
     smod->setFilterKeyColumn(3);
     smod->setDynamicSortFilter(true);
     smod->setSourceModel(model);
-    smod->setFilterFixedString("-");
+   // smod->setFilterFixedString("-");
     view->setColumnHidden(0, true);
 }
 void MainWindow::slot_about()

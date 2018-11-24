@@ -135,8 +135,8 @@ std::unique_ptr<persisted_object> settings::request_data(const QString& str_quer
     pay_dat.setMSecsSinceEpoch(query.value(rec.indexOf("pay_data")).value<qint64>());
     ret->set_person(std::make_tuple(my::base64_minus(query.value(rec.indexOf("kl_name")).toString()), my::base64_minus(query.value(rec.indexOf("kl_surname")).toString()),
                                     my::base64_minus(query.value(rec.indexOf("kl_fname")).toString())));
-    ret->set_start_data(pay_dat.date());
-    ret->set_pay_data(start_dat.date());
+    ret->set_start_data(start_dat.date());
+    ret->set_pay_data(pay_dat.date());
     ret->set_info(my::base64_minus(query.value(rec.indexOf("info")).toString()));
     ret->set_cost(query.value(rec.indexOf("cost")).toUInt());
     ret->set_dop_cost(query.value(rec.indexOf("dop_cost")).toUInt());

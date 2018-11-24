@@ -36,7 +36,6 @@ QVariant lst_model::data(const QModelIndex &index, int role) const
     }
     if (role ==  Qt::EditRole) {
         return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row())));
-
     }
     }
     return QVariant();

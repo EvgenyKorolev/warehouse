@@ -17,6 +17,37 @@ persisted_object::persisted_object(const persisted_object* arg)
     hash = arg->hash;
     nll = arg->nll;
 }
+persisted_object::persisted_object(const persisted_object& arg)
+{
+    person = arg.person;
+    start_data = arg.start_data;
+    pay_data = arg.pay_data;
+    info = arg.info;
+    cost = arg.cost;
+    dop_cost = arg.dop_cost;
+    many = arg.many;
+    closed = arg.closed;
+    uniq = arg.uniq;
+    foto = arg.foto;
+    hash = arg.hash;
+    nll = arg.nll;
+}
+persisted_object& persisted_object::operator=(const persisted_object& arg)
+{
+    person = arg.person;
+    start_data = arg.start_data;
+    pay_data = arg.pay_data;
+    info = arg.info;
+    cost = arg.cost;
+    dop_cost = arg.dop_cost;
+    many = arg.many;
+    closed = arg.closed;
+    uniq = arg.uniq;
+    foto = arg.foto;
+    hash = arg.hash;
+    nll = arg.nll;
+    return *this;
+}
 QString persisted_object::get_text() const
 {
     return std::get<0>(person) + std::get<1>(person) + std::get<2>(person) + "\n" + "Оставлено: " + start_data.toString() +

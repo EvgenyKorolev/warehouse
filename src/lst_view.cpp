@@ -1,6 +1,8 @@
 #include "lst_view.h"
+#include "yes_no.h"
 #include "editor_object.h"
 #include "mainwindow.h"
+#include <memory>
 #include <QMessageBox>
 #include <QMenu>
 
@@ -54,7 +56,7 @@ void lst_view::slot_add()
 {
     editor_object* edob = new editor_object();
     if (edob->exec() == QDialog::Accepted){
-        std::shared_ptr<persisted_object> tmpl(new persisted_object());
+        std::shared_ptr<persisted_object> tmpl(new persisted_object(edob->result()));
         int i = model()->rowCount();
         model()->setData(model()->index(i, 0, QModelIndex()), QVariant::fromValue(tmpl), Qt::EditRole);
     }
@@ -63,14 +65,23 @@ void lst_view::slot_add()
 }
 void lst_view::slot_edit()
 {
-    editor_object* edob = new editor_object();
+    editor_object* edob = new editor_object(*(this->indexAt(curs).data(Qt::EditRole).value<std::shared_ptr<persisted_object>>()));
     if (edob->exec() == QDialog::Accepted){
-
+        int i{indexAt(curs).row()};
+        model()->setData(model()->index(i, 0, QModelIndex()), QVariant::fromValue(std::make_shared<persisted_object>(edob->result())), Qt::EditRole);
     }
+    delete edob;
+    par->slot_filtr();
 }
 void lst_view::slot_del()
 {
-
+    yes_no* pmbx = new yes_no("Вы действительно хотите удалить запись?");
+    if (pmbx->exec() == QDialog::Accepted){
+        model()->removeRow(indexAt(curs).row(), QModelIndex());
+       return;
+    }
+    delete pmbx;
+    par->slot_filtr();
 }
 void lst_view::slot_filtr()
 {

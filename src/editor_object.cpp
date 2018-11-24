@@ -20,14 +20,19 @@ editor_object::editor_object(const persisted_object &arg, QWidget *par) : QDialo
 }
 void editor_object::init()
 {
-    this->resize(400, 600);
+    this->resize(500, 800);
     this->setWindowTitle("Добавить объект");
     this->setWindowIcon(QIcon(":/images/w.png"));
     ed_name = new QLineEdit();
+    ed_name->setText(data.get_name());
     ed_surname = new QLineEdit();
+    ed_surname->setText(data.get_surname());
     ed_fname = new QLineEdit();
+    ed_fname->setText(data.get_fname());
     ed_start_data = new QDateEdit();
+    ed_start_data->setDate(data.get_start_data());
     ed_info = new QTextEdit();
+    ed_info->setText(data.get_info());
     ed_info->setFixedHeight(100);
     cost = new QSpinBox();
     dop_cost = new QSpinBox();
@@ -37,7 +42,8 @@ void editor_object::init()
     cost->setMaximum(1000000000);
     dop_cost->setMinimum(0);
     dop_cost->setMaximum(1000000000);
-
+    cost->setValue(static_cast<int>(data.get_cost()));
+    dop_cost->setValue(static_cast<int>(data.get_dop_cost()));
 
     QPushButton* push_ok = new QPushButton("Готово");
     QObject::connect(push_ok, SIGNAL(clicked()), this, SLOT(slot_save()));

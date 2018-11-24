@@ -11,7 +11,7 @@ class persisted_object
 {
 public:
     persisted_object() : person{std::make_tuple("", "", "")},
-        start_data{QDate()}, pay_data{QDate()}, info{""}, cost{0},
+        start_data{QDate::currentDate()}, pay_data{QDate()}, info{""}, cost{0},
         dop_cost{0}, many{0}, closed{false}, foto{""}, hash{0}, nll(true){
         uniq = QString::number(QDateTime::currentSecsSinceEpoch());
         std::random_device gensc;
@@ -20,10 +20,10 @@ public:
         uniq += QString::number(gen());
     }
     ~persisted_object() = default;
-    persisted_object(const persisted_object&) = default;
+    persisted_object(const persisted_object&);
     persisted_object(const persisted_object*);
     persisted_object(persisted_object&&) = default;
-    persisted_object& operator=(const persisted_object&) = default;
+    persisted_object& operator=(const persisted_object&);
     persisted_object& operator=(persisted_object&& arg) = default;
     bool operator==(const persisted_object&);
     bool operator!=(const persisted_object&);
@@ -44,6 +44,13 @@ public:
     void set_foto_name(const QString& arg){foto = arg;}
     qint32 get_hash() const{return  hash;}
     void set_hash(qint32 arg){hash = arg;}
+
+    QString get_name() const {return std::get<0>(person);}
+    QString get_surname() const {return std::get<1>(person);}
+    QString get_fname() const {return std::get<2>(person);}
+    void set_name(const QString& arg){std::get<0>(person) = arg;}
+    void set_surname(const QString& arg){std::get<1>(person) = arg;}
+    void set_fname(const QString& arg){std::get<2>(person) = arg;}
 
     QString get_text() const;
     QImage get_foto() const;
