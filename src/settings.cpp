@@ -140,7 +140,7 @@ std::unique_ptr<persisted_object> settings::request_data(const QString& str_quer
     ret->set_info(my::base64_minus(query.value(rec.indexOf("info")).toString()));
     ret->set_cost(query.value(rec.indexOf("cost")).toUInt());
     ret->set_dop_cost(query.value(rec.indexOf("dop_cost")).toUInt());
-    //ret->set_foto_name(my::base64_minus(query.value(rec.indexOf("foto_name")).toString()));
+    ret->set_foto_name(my::base64_minus(query.value(rec.indexOf("foto_name")).toString()));
     ret->set_hash(qint32(query.value(rec.indexOf("hash")).toULongLong()));
     ret->set_many(query.value(rec.indexOf("many")).toUInt());
     if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){

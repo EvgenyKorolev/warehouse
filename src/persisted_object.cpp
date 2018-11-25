@@ -2,6 +2,7 @@
 #include "functions.h"
 #include "persisted_object.h"
 #include <QPainter>
+#include <QDir>
 persisted_object::persisted_object(const persisted_object* arg)
 {
     person = arg->person;
@@ -55,7 +56,7 @@ QString persisted_object::get_text() const
 }
 QImage persisted_object::get_foto() const
 {
-    QImage ret = QImage(settings::getInatance().get_image_dir() + foto + ".png", "png");
+    QImage ret = QImage(settings::getInatance().get_image_dir() + foto, "png");
     if (ret.isNull()) return QImage(":/images/nophoto.png", "png");
     if (im_hash(ret) != hash){
         QImage img = QImage(":/images/no.png", "png");
@@ -132,5 +133,14 @@ QString persisted_object::str_closed()
 }
 bool persisted_object::add_photo(const QImage& arg)
 {
-
+    hash = im_hash(arg);
+    QDir dr;
+    if (foto != "") {
+        dr.mkpath(settings::getInatance().get_image_dir() + foto.left(foto.indexOf("/") + 1));
+        return arg.save(settings::getInatance().get_image_dir() + foto);
+    } else {
+        dr.mkpath(settings::getInatance().get_image_dir() + QString::number(QDate::currentDate().dayOfYear()));
+        foto = QString::number(QDate::currentDate().dayOfYear()) + "/" + uniq + ".png";
+        return arg.save(settings::getInatance().get_image_dir() + foto);
+    }
 }

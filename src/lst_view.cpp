@@ -20,7 +20,7 @@ void lst_view::mousePressEvent(QMouseEvent *arg)
             QAction *ed_obj = new QAction("Редактировать", this);
             QObject::connect(ed_obj, SIGNAL(triggered()), this, SLOT(slot_edit()));
             QAction *flt_obj = new QAction("Фильтр", this);
-            QObject::connect(flt_obj, SIGNAL(triggered()), this, SLOT(slot_filtr()));
+            QObject::connect(flt_obj, SIGNAL(triggered()), par, SLOT(slot_search()));
             QAction *add_obj = new QAction("Добавить объект", this);
             QObject::connect(add_obj, SIGNAL(triggered()), this, SLOT(slot_add()));
             QAction *del_obj = new QAction("Удалить объект", this);
@@ -33,7 +33,7 @@ void lst_view::mousePressEvent(QMouseEvent *arg)
             QAction *ed_doc = new QAction("Добавить объект", this);
             QObject::connect(ed_doc, SIGNAL(triggered()), this, SLOT(slot_add()));
             QAction *fix_doc = new QAction("Фильтр", this);
-            QObject::connect(fix_doc, SIGNAL(triggered()), this, SLOT(slot_filtr()));
+            QObject::connect(fix_doc, SIGNAL(triggered()), par, SLOT(slot_search()));
             mnu->addAction(ed_doc);
             mnu->addAction(fix_doc);
     }
@@ -82,8 +82,4 @@ void lst_view::slot_del()
     }
     delete pmbx;
     par->slot_def_filtr();
-}
-void lst_view::slot_filtr()
-{
-
 }

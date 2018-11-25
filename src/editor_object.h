@@ -19,6 +19,7 @@ public:
     persisted_object result();
 public slots:
     void slot_save();
+    void slot_add_foto();
 private:
     void init();
     QLineEdit* ed_name;         // Имя
@@ -28,7 +29,7 @@ private:
     QTextEdit* ed_info;         // Доп. информация
     QSpinBox* cost;             // Стоимость в сутки
     QSpinBox* dop_cost;         // Стоимость дополнительных услуг
-    QImage actual_img;         // Фотография
+    QImage actual_img;          // Фотография
 
     QGraphicsScene* main_scene; // Сцена для фото
     QGraphicsView* main_view;   // Вьюха для фото

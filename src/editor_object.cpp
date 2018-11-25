@@ -1,4 +1,5 @@
 #include "editor_object.h"
+#include "settings.h"
 #include <QGridLayout>
 #include <QPushButton>
 #include <QLineEdit>
@@ -7,6 +8,7 @@
 #include <QSpinBox>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QFileDialog>
 #include <QLabel>
 editor_object::editor_object(QWidget* par) : QDialog(par)
 {
@@ -50,6 +52,7 @@ void editor_object::init()
     QPushButton* push_cancel = new QPushButton("Отмена");
     QObject::connect(push_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     QPushButton* image_push = new QPushButton("Загрузить фото");
+    QObject::connect(image_push, SIGNAL(clicked()), this, SLOT(slot_add_foto()));
 
     QLabel* lab_name = new QLabel();
     lab_name->setText("Имя клиента: ");
@@ -73,6 +76,15 @@ void editor_object::init()
     main_view->setCacheMode(QGraphicsView::CacheBackground);
     main_view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     main_view->setScene(main_scene);
+
+    auto cc = data.get_foto_name();
+
+    if (data.get_foto_name() == "") {
+        actual_img = QImage();
+    } else {
+        actual_img = QImage(settings::getInatance().get_image_dir() + data.get_foto_name(), "png");
+    }
+    main_scene->addPixmap(QPixmap::fromImage(actual_img));
 
     QGridLayout* main_lay = new QGridLayout();
     QHBoxLayout* push_lay = new QHBoxLayout();
@@ -117,10 +129,18 @@ void editor_object::slot_save()
     data.set_info(ed_info->toPlainText());
     data.set_cost(static_cast<unsigned>(cost->value()));
     data.set_dop_cost(static_cast<unsigned>(dop_cost->value()));
-    data.add_photo(actual_img);
+    if (!actual_img.isNull()) data.add_photo(actual_img);
     emit accept();
 }
 persisted_object editor_object::result()
 {
     return  data;
+}
+void editor_object::slot_add_foto()
+{
+    QString str = QFileDialog::getOpenFileName(nullptr, "Выберите изображение", "", "*.jpg");
+    if (str == "") return;
+    actual_img = QImage(str).scaled(600, 600, Qt::KeepAspectRatio);
+
+    main_scene->addPixmap(QPixmap::fromImage(actual_img));
 }

@@ -34,6 +34,9 @@ QVariant lst_model::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
         }
     }
+    if (role ==  Qt::UserRole) {
+         return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
+    }
     if (role ==  Qt::EditRole) {
         return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row())));
     }

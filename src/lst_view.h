@@ -15,7 +15,6 @@ public slots:
     void slot_add();
     void slot_edit();
     void slot_del();
-    void slot_filtr();
 private:
     MainWindow* par;
     QPoint curs;   // Запоминаем местоположение курсора

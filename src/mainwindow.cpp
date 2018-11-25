@@ -4,6 +4,7 @@
 #include "lst_model.h"
 #include "delegats.h"
 #include "editor_hollydays.h"
+#include "filtr.h"
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(hollyday_push, SIGNAL(triggered(bool)), this, SLOT(slot_hol()));
     QObject::connect(about_push, SIGNAL(triggered(bool)), this, SLOT(slot_about()));
     QObject::connect(reset_push, SIGNAL(triggered(bool)), this, SLOT(slot_def_filtr()));
+    QObject::connect(serch_push, SIGNAL(triggered(bool)), this, SLOT(slot_search()));
     view->setColumnWidth(0, 200);
     view->setColumnWidth(1, 200);
     view->setColumnWidth(2, 200);
@@ -52,7 +54,6 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     model = new lst_model();
     view->setItemDelegateForColumn(3, new show_delegat());
-    view->setItemDelegateForColumn(1, new show_delegat());
     slot_def_filtr();
     PicLabel = new QLabel();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
@@ -84,9 +85,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::slot_hol()
 {
     editor_hollydays* edhol = new editor_hollydays();
-    if(edhol->exec() == QDialog::Accepted){
-
-    }
+    if(edhol->exec() == QDialog::Accepted){}
+    delete edhol;
 }
 void MainWindow::slot_def_filtr()
 {
@@ -115,5 +115,25 @@ void MainWindow::slot_about()
 void MainWindow::slot_set_pic()
 {
     QModelIndex arg = view->currentIndex();
-    PicLabel->setPixmap(QPixmap::fromImage(model->data(model->index(arg.row(), 4)).value<QImage>()));
+    PicLabel->setPixmap(QPixmap::fromImage(model->data(arg, Qt::UserRole).value<QImage>()));
+}
+void MainWindow::slot_search()
+{
+    filtr* edflt = new filtr(this);
+    if (edflt->exec() == QDialog::Accepted){
+
+    }
+    delete edflt;
+}
+void MainWindow::slot_filtr(const QString& arg)
+{
+    QSortFilterProxyModel* smod = new QSortFilterProxyModel();
+    view->setModel(smod);
+    smod->setFilterKeyColumn(3);
+    smod->setDynamicSortFilter(true);
+    smod->setSourceModel(model);
+    QRegExp reg;
+    reg.setPattern(arg);
+    smod->setFilterRegExp(reg);
+    view->setColumnHidden(0, true);
 }

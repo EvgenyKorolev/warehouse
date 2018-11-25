@@ -24,7 +24,7 @@ proxy_data::proxy_data()
         ret->set_info(my::base64_minus(query.value(rec.indexOf("info")).toString()));
         ret->set_cost(query.value(rec.indexOf("cost")).toUInt());
         ret->set_dop_cost(query.value(rec.indexOf("dop_cost")).toUInt());
-        //ret->set_foto_name(my::base64_minus(query.value(rec.indexOf("foto_name")).toString()));
+        ret->set_foto_name(my::base64_minus(query.value(rec.indexOf("foto_name")).toString()));
         ret->set_hash(qint32(query.value(rec.indexOf("hash")).toULongLong()));
         ret->set_many(query.value(rec.indexOf("many")).toUInt());
         if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
@@ -94,6 +94,10 @@ void proxy_data::del(std::shared_ptr<persisted_object> arg)
     settings& tmps = settings::getInatance();
     QString prep = "DELETE FROM persisted WHERE uniq ='" + arg->get_uniq() + "';";
     if (tmps.db_execute(prep, "Что-то не то с удалением записи из базы данных.")){
+        if (arg->get_fname() != ""){
+            QFile fl(settings::getInatance().get_image_dir() + arg->get_foto_name());
+            fl.remove();
+        }
         auto it = data.begin();
         while (it != data.end()){
             if ((*it)->get_uniq() == arg->get_uniq()){
