@@ -143,7 +143,7 @@ std::unique_ptr<persisted_object> settings::request_data(const QString& str_quer
     ret->set_foto_name(my::base64_minus(query.value(rec.indexOf("foto_name")).toString()));
     ret->set_hash(qint32(query.value(rec.indexOf("hash")).toULongLong()));
     ret->set_many(query.value(rec.indexOf("many")).toUInt());
-    if (my::base64_minus(query.value(rec.indexOf("closed")).toString()) == "true"){
+    if (query.value(rec.indexOf("closed")).toString() == "true"){
         ret->set_close();
     } else ret->unset_close();
     ret->set_uniq(query.value(rec.indexOf("uniq")).toString());

@@ -9,6 +9,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QFileDialog>
+#include <QHBoxLayout>
 #include <QLabel>
 editor_object::editor_object(QWidget* par) : QDialog(par)
 {
@@ -22,7 +23,7 @@ editor_object::editor_object(const persisted_object &arg, QWidget *par) : QDialo
 }
 void editor_object::init()
 {
-    this->resize(500, 800);
+    this->resize(600, 800);
     this->setWindowTitle("Добавить объект");
     this->setWindowIcon(QIcon(":/images/w.png"));
     ed_name = new QLineEdit();
@@ -53,6 +54,8 @@ void editor_object::init()
     QObject::connect(push_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     QPushButton* image_push = new QPushButton("Загрузить фото");
     QObject::connect(image_push, SIGNAL(clicked()), this, SLOT(slot_add_foto()));
+    close_push = new QPushButton("Закрыть позицию");
+    QObject::connect(close_push, SIGNAL(clicked()), this, SLOT(slot_close()));
 
     QLabel* lab_name = new QLabel();
     lab_name->setText("Имя клиента: ");
@@ -86,7 +89,7 @@ void editor_object::init()
     }
     main_scene->addPixmap(QPixmap::fromImage(actual_img));
 
-    QGridLayout* main_lay = new QGridLayout();
+    main_lay = new QGridLayout();
     QHBoxLayout* push_lay = new QHBoxLayout();
     push_lay->addWidget(push_ok);
     push_lay->addWidget(push_cancel);
@@ -108,6 +111,14 @@ void editor_object::init()
     main_lay->addWidget(lab_dop_cost, 9, 0);
     main_lay->addWidget(dop_cost, 9, 1);
     main_lay->addLayout(push_lay, 10, 0, 1, 2);
+    if (data.is_closed()){
+        QLabel* ltxt = new QLabel();
+        ltxt->setText("Закрыто " + data.get_pay_data().toString("dd.MM.yyyy") + " года. Оплачено " +
+                      QString::number(data.today_cost()) + "руб.");
+        main_lay->addWidget(ltxt, 11, 0, 1, 2);
+    } else {
+        main_lay->addWidget(close_push, 11, 0, 1, 2);
+    }
     this->setLayout(main_lay);
 }
 editor_object::~editor_object()
@@ -141,6 +152,14 @@ void editor_object::slot_add_foto()
     QString str = QFileDialog::getOpenFileName(nullptr, "Выберите изображение", "", "*.jpg");
     if (str == "") return;
     actual_img = QImage(str).scaled(600, 600, Qt::KeepAspectRatio);
-
     main_scene->addPixmap(QPixmap::fromImage(actual_img));
+}
+void editor_object::slot_close()
+{
+    data.close();
+    QLabel* ltxt = new QLabel();
+    ltxt->setText("Закрыто " + data.get_pay_data().toString("dd.MM.yyyy") + " года. Оплачено " +
+                  QString::number(data.today_cost()) + "руб.");
+    close_push->hide();
+    main_lay->addWidget(ltxt, 11, 0, 1, 2);
 }

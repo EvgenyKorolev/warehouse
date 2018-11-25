@@ -9,6 +9,8 @@ class QGraphicsView;
 class QTextEdit;
 class QSpinBox;
 class QDateEdit;
+class QGridLayout;
+class QBoxLayout;
 class editor_object : public QDialog
 {
     Q_OBJECT
@@ -20,6 +22,7 @@ public:
 public slots:
     void slot_save();
     void slot_add_foto();
+    void slot_close();
 private:
     void init();
     QLineEdit* ed_name;         // Имя
@@ -34,5 +37,7 @@ private:
     QGraphicsScene* main_scene; // Сцена для фото
     QGraphicsView* main_view;   // Вьюха для фото
     persisted_object data;      // Внутренний объект
+    QPushButton* close_push;
+    QGridLayout* main_lay;
 };
 #endif // EDITOR_OBJECT_H
