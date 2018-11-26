@@ -106,8 +106,9 @@ Qt::ItemFlags lst_model::flags(const QModelIndex &index) const
 }
 bool lst_model::removeRows(int row, int count, const QModelIndex & parent)
 {
+    if (row + count > model_data.count()) return false;
     beginRemoveRows(parent, row, row + count - 1);
-    for (int i = row; i < row + count; i++){
+    for (int i = row; i < row + count; ++i){
         model_data.del(model_data.at(static_cast<std::size_t>(row)));
      }
      endRemoveRows();

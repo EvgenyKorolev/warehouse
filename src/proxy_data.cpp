@@ -107,4 +107,4 @@ void proxy_data::del(std::shared_ptr<persisted_object> arg)
             ++it;
         }
     }
-};
+}

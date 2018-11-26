@@ -66,6 +66,8 @@ MainWindow::MainWindow(QWidget *parent)
     view->resizeRowsToContents();
     model = new lst_model();
     view->setItemDelegateForColumn(3, new show_delegat());
+    QSortFilterProxyModel* smod = new QSortFilterProxyModel();
+    view->setModel(smod);
     slot_filtr_reg("-", 0);
     PicLabel = new QLabel();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
@@ -137,7 +139,9 @@ void MainWindow::slot_search()
 void MainWindow::slot_filtr_reg(const QString& arg, int col)
 {
     QSortFilterProxyModel* smod = new QSortFilterProxyModel();
+    QAbstractItemModel* dmod = view->model();
     view->setModel(smod);
+    delete dmod;
     smod->setFilterKeyColumn(col);
     smod->setDynamicSortFilter(true);
     smod->setSourceModel(model);
@@ -163,7 +167,9 @@ void MainWindow::slot_filtr_reg(const QString& arg, int col)
 void MainWindow::slot_filtr_str(const QString& arg, int col)
 {
     QSortFilterProxyModel* smod = new QSortFilterProxyModel();
+    QAbstractItemModel* dmod = view->model();
     view->setModel(smod);
+    delete dmod;
     smod->setFilterKeyColumn(col);
     smod->setDynamicSortFilter(true);
     smod->setSourceModel(model);

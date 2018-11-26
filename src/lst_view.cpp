@@ -78,7 +78,7 @@ void lst_view::slot_del()
     yes_no* pmbx = new yes_no("Вы действительно хотите удалить запись?");
     if (pmbx->exec() == QDialog::Accepted){
         model()->removeRow(indexAt(curs).row(), QModelIndex());
-       return;
+        model()->layoutChanged();
     }
     delete pmbx;
     par->slot_def_filtr();
