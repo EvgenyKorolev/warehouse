@@ -63,8 +63,8 @@ public:
 
     bool add_photo(const QImage& arg);
     qint32 im_hash(const QImage& arg) const;
-    void set_many(unsigned arg){cost = arg;}
-    unsigned get_many() const{return cost;}
+    void set_many(unsigned arg){many = arg;}
+    unsigned get_many() const{return many;}
     bool is_closed() const {return closed;}
     void unset_close(){closed = false;}
     void set_close(){closed = true;}

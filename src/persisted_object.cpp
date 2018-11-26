@@ -51,8 +51,8 @@ persisted_object& persisted_object::operator=(const persisted_object& arg)
 }
 QString persisted_object::get_text() const
 {
-    return std::get<0>(person) + std::get<1>(person) + std::get<2>(person) + "<br>" + "Оставлено: " + start_data.toString() +
-            "<br>" + "Текущая стоимость: " + QString::number(get_pay()) + "руб.";
+    return std::get<0>(person) + " " + std::get<1>(person) + " " + std::get<2>(person) + " \n" + "Оставлено: " + start_data.toString() +
+            " \n" + "Текущая стоимость: " + QString::number(today_cost()) + "руб.";
 }
 QImage persisted_object::get_foto() const
 {

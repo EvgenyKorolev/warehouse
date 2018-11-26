@@ -62,9 +62,11 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(serch_push, SIGNAL(triggered(bool)), this, SLOT(slot_search()));
     view->setSelectionMode(QAbstractItemView::ExtendedSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    view->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    view->resizeRowsToContents();
     model = new lst_model();
     view->setItemDelegateForColumn(3, new show_delegat());
-    slot_def_filtr();
+    slot_filtr_reg("-", 0);
     PicLabel = new QLabel();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
@@ -100,26 +102,7 @@ void MainWindow::slot_hol()
 }
 void MainWindow::slot_def_filtr()
 {
-    QSortFilterProxyModel* smod = new QSortFilterProxyModel();
-    view->setModel(smod);
-    smod->setFilterKeyColumn(0);
-    smod->setDynamicSortFilter(true);
-    smod->setSourceModel(model);
-    smod->setFilterFixedString("-");
-    view->setColumnHidden(0, true);
-    view->setColumnHidden(4, true);
-    view->setColumnHidden(5, true);
-    view->setColumnHidden(6, true);
-    view->setColumnHidden(7, true);
-    view->setColumnHidden(8, true);
-    view->setColumnHidden(9, true);
-    view->setColumnHidden(10, true);
-    view->setColumnWidth(1, 100);
-    view->setColumnWidth(2, 100);
-    view->horizontalHeader()->setStretchLastSection(true);
-    view->setSortingEnabled(true);
-    connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-            this, SLOT(slot_set_pic()));
+    slot_filtr_reg("-", 0);
 }
 void MainWindow::slot_about()
 {
@@ -137,15 +120,17 @@ void MainWindow::slot_about()
 }
 void MainWindow::slot_set_pic()
 {
-    QModelIndex arg = view->currentIndex();
     PicLabel->setAlignment(Qt::AlignHCenter);
-    PicLabel->setPixmap(QPixmap::fromImage(model->data(arg, Qt::UserRole).value<QImage>()));
+    PicLabel->setPixmap(QPixmap::fromImage(view->model()->data(view->currentIndex(), Qt::UserRole).value<QImage>()));
 }
 void MainWindow::slot_search()
 {
     filtr* edflt = new filtr(this);
     if (edflt->exec() == QDialog::Accepted){
-
+         slot_filtr_reg(".*" + edflt->result() + ".*", 4);
+         view->setColumnHidden(0, false);
+         view->resizeRowsToContents();
+         view->scrollToBottom();
     }
     delete edflt;
 }
@@ -159,18 +144,19 @@ void MainWindow::slot_filtr_reg(const QString& arg, int col)
     QRegExp reg;
     reg.setPattern(arg);
     smod->setFilterRegExp(reg);
-    view->setColumnHidden(0, true);
     view->setColumnHidden(4, true);
-    view->setColumnHidden(5, true);
-    view->setColumnHidden(6, true);
-    view->setColumnHidden(7, true);
-    view->setColumnHidden(8, true);
-    view->setColumnHidden(9, true);
-    view->setColumnHidden(10, true);
-    view->setColumnWidth(1, 100);
-    view->setColumnWidth(2, 100);
+    view->setColumnHidden(0, true);
+//    view->setColumnHidden(5, true);
+//    view->setColumnHidden(6, true);
+//    view->setColumnHidden(7, true);
+//    view->setColumnHidden(8, true);
+//    view->setColumnHidden(9, true);
+//    view->setColumnHidden(10, true);
+    view->setColumnWidth(1, 90);
+    view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
+    view->resizeRowsToContents();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
 }
@@ -182,26 +168,33 @@ void MainWindow::slot_filtr_str(const QString& arg, int col)
     smod->setDynamicSortFilter(true);
     smod->setSourceModel(model);
     smod->setFilterFixedString(arg);
-    view->setColumnHidden(0, true);
     view->setColumnHidden(4, true);
-    view->setColumnHidden(5, true);
-    view->setColumnHidden(6, true);
-    view->setColumnHidden(7, true);
-    view->setColumnHidden(8, true);
-    view->setColumnHidden(9, true);
-    view->setColumnHidden(10, true);
-    view->setColumnWidth(1, 100);
-    view->setColumnWidth(2, 100);
+    view->setColumnHidden(0, true);
+//    view->setColumnHidden(5, true);
+//    view->setColumnHidden(6, true);
+//    view->setColumnHidden(7, true);
+//    view->setColumnHidden(8, true);
+//    view->setColumnHidden(9, true);
+//    view->setColumnHidden(10, true);
+    view->setColumnWidth(1, 90);
+    view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
+    view->resizeRowsToContents();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
 }
 void MainWindow::slot_all()
 {
     slot_filtr_str("", 0);
+    view->setColumnHidden(0, false);
+    view->resizeRowsToContents();
+    view->scrollToBottom();
 }
 void MainWindow::slot_opl()
 {
-slot_filtr_str("Да", 0);
+    slot_filtr_str("Да", 0);
+    view->resizeRowsToContents();
+    view->scrollToBottom();
 }
+
