@@ -4,5 +4,6 @@
         <file>images/nophoto.png</file>
         <file>images/w.png</file>
         <file>images/w2.png</file>
+        <file>images/s.png</file>
     </qresource>
 </RCC>

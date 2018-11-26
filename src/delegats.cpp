@@ -9,7 +9,5 @@ void show_delegat::updateEditorGeometry(QWidget* lab, const QStyleOptionViewItem
 }
 void show_delegat::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
 {
-   painter->drawText(option.rect, index.model()->data(index).toString()); //index.model()->data(index, Qt::EditRole).toString());
-   //painter->drawText(option.rect.bottomLeft(), index.model()->data(index, Qt::EditRole).toString());
-//   painter->restore();
+   painter->drawText(option.rect, index.model()->data(index).toString());
 }
