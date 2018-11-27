@@ -10,7 +10,9 @@ void show_delegat::updateEditorGeometry(QWidget* lab, const QStyleOptionViewItem
 }
 void show_delegat::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
 {
+   painter->save();
    painter->drawText(option.rect, index.model()->data(index).toString());
+   painter->restore();
 }
 // Делегат для рисования картинки
 pic_delegat::pic_delegat(QObject *parent) : QStyledItemDelegate(parent){}

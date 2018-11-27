@@ -152,8 +152,13 @@ void editor_object::slot_add_foto()
     QString str = QFileDialog::getOpenFileName(nullptr, "Выберите изображение",
                                                "", tr("Images (*.png *.gif *.jpg *.jpeg *.bmp)"));
     if (str == "") return;
-    actual_img = QImage(str).scaled(600, 600, Qt::KeepAspectRatio);
-    main_scene->addPixmap(QPixmap::fromImage(actual_img));
+    QImage tmpi = QImage(str).scaled(600, 600, Qt::KeepAspectRatio);
+    if (tmpi.isNull()){
+        QMessageBox::information(nullptr, "Внимание", "Кажется этот формат изображения не поддерживается");
+    } else {
+        actual_img = tmpi;
+        main_scene->addPixmap(QPixmap::fromImage(actual_img));
+    }
 }
 void editor_object::slot_close()
 {

@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     QMenuBar* main_tb = new QMenuBar(this);
     this->setMenuBar(main_tb);
-    //this->addToolBar(Qt::ToolBarArea::TopToolBarArea, main_tb);
     QAction* add_push = new QAction("Добавить запись");
     QAction* serch_push = new QAction("Поиск");
     QAction* reset_push = new QAction("Сброс");
@@ -60,11 +59,10 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(about_push, SIGNAL(triggered(bool)), this, SLOT(slot_about()));
     QObject::connect(reset_push, SIGNAL(triggered(bool)), this, SLOT(slot_def_filtr()));
     QObject::connect(serch_push, SIGNAL(triggered(bool)), this, SLOT(slot_search()));
+    view->verticalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    view->verticalHeader()->setDefaultSectionSize(150);
     view->setSelectionMode(QAbstractItemView::ExtendedSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    view->verticalHeader()->setSectionResizeMode(QHeaderView::Interactive); //QHeaderView::ResizeToContents
-    view->verticalHeader()->setDefaultSectionSize(150);
-    //view->resizeRowsToContents();
     model = new lst_model();
     view->setItemDelegateForColumn(3, new show_delegat());
     view->setColumnWidth(3, settings::get_wight());
@@ -133,7 +131,6 @@ void MainWindow::slot_search()
     if (edflt->exec() == QDialog::Accepted){
          slot_filtr_reg(".*" + edflt->result() + ".*", 4);
          view->setColumnHidden(0, false);
-         //view->resizeRowsToContents();
          view->setColumnWidth(3, settings::get_wight());
          view->scrollToBottom();
     }
@@ -178,7 +175,6 @@ void MainWindow::slot_filtr_str(const QString& arg, int col)
     view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
-   // view->resizeRowsToContents();
     view->setColumnWidth(3, settings::get_wight());
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
@@ -187,7 +183,6 @@ void MainWindow::slot_all()
 {
     slot_filtr_str("", 0);
     view->setColumnHidden(0, false);
-    //view->resizeRowsToContents();
     view->setColumnWidth(3, settings::get_wight() - 50);
     view->setColumnWidth(0, 50);
     view->scrollToBottom();
@@ -195,7 +190,6 @@ void MainWindow::slot_all()
 void MainWindow::slot_opl()
 {
     slot_filtr_str("Да", 0);
-    //view->resizeRowsToContents();
     view->setColumnWidth(3, settings::get_wight());
     view->scrollToBottom();
 }
