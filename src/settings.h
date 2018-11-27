@@ -19,6 +19,7 @@ public:
         static settings _instance;
         return _instance;
     }
+    static int get_wight() {return 300;}
     bool is_hollyday(const QDate&) const;
     bool add_hollyday(const QDate&);
     bool del_holliday(const QDate&);

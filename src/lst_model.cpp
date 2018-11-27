@@ -12,7 +12,7 @@ int lst_model::rowCount(const QModelIndex &parent) const
 int lst_model::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 5;
+    return 6;
 }
 QVariant lst_model::data(const QModelIndex &index, int role) const
 {
@@ -36,25 +36,9 @@ QVariant lst_model::data(const QModelIndex &index, int role) const
                     model_data.at(static_cast<std::size_t>(index.row()))->get_fname();
             return QVariant::fromValue(ret);
         }
-//        if (index.column() == 5){
-//           return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_info());
-//        }
-//        if (index.column() == 6){
-//            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_cost());
-//        }
-//        if (index.column() == 7){
-//            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_dop_cost());
-//        }
-//        if (index.column() == 8){
-//            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_many());
-//        }
-//        if (index.column() == 9){
-//            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_pay_data().toString());
-//        }
-//        if (index.column() == 10){
-//            return QVariant::fromValue(0);
-//           // return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
-//        }
+        if (index.column() == 5){
+           return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto().scaled(140, 140, Qt::KeepAspectRatio));
+        }
     }
     if (role ==  Qt::UserRole) {
          return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());

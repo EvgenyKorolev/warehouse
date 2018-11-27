@@ -20,7 +20,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    this->resize(800, 600);
+    this->resize(1100, 700);
     this->setWindowTitle("Учёт и хранение");
     this->setWindowIcon(QIcon(":/images/w.png"));
 
@@ -62,10 +62,13 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(serch_push, SIGNAL(triggered(bool)), this, SLOT(slot_search()));
     view->setSelectionMode(QAbstractItemView::ExtendedSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    view->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    view->resizeRowsToContents();
+    view->verticalHeader()->setSectionResizeMode(QHeaderView::Interactive); //QHeaderView::ResizeToContents
+    view->verticalHeader()->setDefaultSectionSize(150);
+    //view->resizeRowsToContents();
     model = new lst_model();
     view->setItemDelegateForColumn(3, new show_delegat());
+    view->setColumnWidth(3, settings::get_wight());
+    view->setItemDelegateForColumn(5, new pic_delegat());
     QSortFilterProxyModel* smod = new QSortFilterProxyModel();
     view->setModel(smod);
     slot_filtr_reg("-", 0);
@@ -78,12 +81,11 @@ MainWindow::MainWindow(QWidget *parent)
     view_area->setAllowedAreas(Qt::LeftDockWidgetArea);
     view_area->setFeatures(QDockWidget::NoDockWidgetFeatures);
     addDockWidget(Qt::LeftDockWidgetArea, view_area);
-    view_area->setMinimumWidth(450);
+    view_area->setMinimumWidth(700);
     this->setCentralWidget(PicLabel);
-;}
+}
 MainWindow::~MainWindow()
 {
-
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -131,7 +133,8 @@ void MainWindow::slot_search()
     if (edflt->exec() == QDialog::Accepted){
          slot_filtr_reg(".*" + edflt->result() + ".*", 4);
          view->setColumnHidden(0, false);
-         view->resizeRowsToContents();
+         //view->resizeRowsToContents();
+         view->setColumnWidth(3, settings::get_wight());
          view->scrollToBottom();
     }
     delete edflt;
@@ -150,17 +153,12 @@ void MainWindow::slot_filtr_reg(const QString& arg, int col)
     smod->setFilterRegExp(reg);
     view->setColumnHidden(4, true);
     view->setColumnHidden(0, true);
-//    view->setColumnHidden(5, true);
-//    view->setColumnHidden(6, true);
-//    view->setColumnHidden(7, true);
-//    view->setColumnHidden(8, true);
-//    view->setColumnHidden(9, true);
-//    view->setColumnHidden(10, true);
     view->setColumnWidth(1, 90);
     view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
-    view->resizeRowsToContents();
+    //view->resizeRowsToContents();
+    view->setColumnWidth(3, settings::get_wight());
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
 }
@@ -176,17 +174,12 @@ void MainWindow::slot_filtr_str(const QString& arg, int col)
     smod->setFilterFixedString(arg);
     view->setColumnHidden(4, true);
     view->setColumnHidden(0, true);
-//    view->setColumnHidden(5, true);
-//    view->setColumnHidden(6, true);
-//    view->setColumnHidden(7, true);
-//    view->setColumnHidden(8, true);
-//    view->setColumnHidden(9, true);
-//    view->setColumnHidden(10, true);
     view->setColumnWidth(1, 90);
     view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
-    view->resizeRowsToContents();
+   // view->resizeRowsToContents();
+    view->setColumnWidth(3, settings::get_wight());
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
 }
@@ -194,13 +187,16 @@ void MainWindow::slot_all()
 {
     slot_filtr_str("", 0);
     view->setColumnHidden(0, false);
-    view->resizeRowsToContents();
+    //view->resizeRowsToContents();
+    view->setColumnWidth(3, settings::get_wight() - 50);
+    view->setColumnWidth(0, 50);
     view->scrollToBottom();
 }
 void MainWindow::slot_opl()
 {
     slot_filtr_str("Да", 0);
-    view->resizeRowsToContents();
+    //view->resizeRowsToContents();
+    view->setColumnWidth(3, settings::get_wight());
     view->scrollToBottom();
 }
 

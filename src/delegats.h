@@ -10,5 +10,12 @@ public:
     void updateEditorGeometry(QWidget *lab, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const;
 };
-
+class pic_delegat : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    pic_delegat(QObject *parent = nullptr);
+    void updateEditorGeometry(QWidget *lab, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const;
+};
 #endif // DELEGATS_H
