@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QAbstractItemView>
+#include <QScrollArea>
 #include <QDockWidget>
 #include <QHeaderView>
 #include <QPixmap>
@@ -18,12 +19,52 @@
 #include <QMenu>
 #include <QMenuBar>
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), t_status{false, true, true, true, false, true, false, false, false, false}
 {
     this->resize(1100, 700);
     this->setWindowTitle("Учёт и хранение");
     this->setWindowIcon(QIcon(":/images/w.png"));
-
+    QMenu* show_column = new QMenu("Столбцы");
+    column0 = show_column->addAction("Оплата");
+    column0->setCheckable(true);
+    column0->setChecked(t_status.at(0));
+    column1 = show_column->addAction("Оставлено");
+    column1->setCheckable(true);
+    column1->setChecked(t_status.at(1));
+    column2 = show_column->addAction("Стоимость");
+    column2->setCheckable(true);
+    column2->setChecked(t_status.at(2));
+    column3 = show_column->addAction("Информация");
+    column3->setCheckable(true);
+    column3->setChecked(t_status.at(3));
+    column4 = show_column->addAction("ФИО Клиента");
+    column4->setCheckable(true);
+    column4->setChecked(t_status.at(4));
+    column5 = show_column->addAction("Фотография");
+    column5->setCheckable(true);
+    column5->setChecked(t_status.at(5));
+    column6 = show_column->addAction("Доп. информация");
+    column6->setCheckable(true);
+    column6->setChecked(t_status.at(6));
+    column7 = show_column->addAction("Доп. стоимость");
+    column7->setCheckable(true);
+    column7->setChecked(t_status.at(7));
+    column8 = show_column->addAction("Cтоимость суток");
+    column8->setCheckable(true);
+    column8->setChecked(t_status.at(8));
+    column9 = show_column->addAction("Дата оплаты");
+    column9->setCheckable(true);
+    column9->setChecked(t_status.at(9));
+    QObject::connect(column0, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column1, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column2, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column3, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column4, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column5, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column6, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column7, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column8, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
+    QObject::connect(column9, SIGNAL(toggled(bool)), this, SLOT(slot_change_columns()));
     QMenuBar* main_tb = new QMenuBar(this);
     this->setMenuBar(main_tb);
     QAction* add_push = new QAction("Добавить запись");
@@ -53,6 +94,8 @@ MainWindow::MainWindow(QWidget *parent)
     main_tb->addSeparator();
     main_tb->addAction(about_push);
     main_tb->addSeparator();
+    main_tb->addMenu(show_column);
+    main_tb->addSeparator();
     view = new lst_view(this);
     QObject::connect(add_push, SIGNAL(triggered(bool)), view, SLOT(slot_add()));
     QObject::connect(hollyday_push, SIGNAL(triggered(bool)), this, SLOT(slot_hol()));
@@ -64,26 +107,43 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSelectionMode(QAbstractItemView::ExtendedSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     model = new lst_model();
-    view->setItemDelegateForColumn(3, new show_delegat());
-    view->setColumnWidth(3, settings::get_wight());
-    view->setItemDelegateForColumn(5, new pic_delegat());
-    QSortFilterProxyModel* smod = new QSortFilterProxyModel();
-    view->setModel(smod);
-    slot_filtr_reg("-", 0);
+    view->setItemDelegateForColumn(5, new show_delegat());
+    view->setItemDelegateForColumn(3, new pic_delegat());
     PicLabel = new QLabel();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
-    // Для представления
-    QDockWidget *view_area = new QDockWidget("Клиеты", this);
-    view_area->setWidget(view);
-    view_area->setAllowedAreas(Qt::LeftDockWidgetArea);
-    view_area->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    addDockWidget(Qt::LeftDockWidgetArea, view_area);
-    view_area->setMinimumWidth(700);
-    this->setCentralWidget(PicLabel);
+    view_area = new QDockWidget("Клиеты", this);
+    view_area->setWidget(PicLabel);
+    PicLabel->setFixedSize(QSize(600,600));
+    view_area->setFeatures(QDockWidget::AllDockWidgetFeatures	);
+    addDockWidget(Qt::RightDockWidgetArea, view_area);
+    QMenu* show_doc = new QMenu("Просмотр фото");
+    doc = show_doc->addAction("Показать");
+    doc->setCheckable(true);
+    if (settings::getInatance().get_ws() == win::one){
+        doc->setChecked(false);
+        slot_reset_doc();
+    } else {
+        doc->setChecked(true);
+        slot_reset_doc();
+    }
+    main_tb->addMenu(show_doc);
+    QObject::connect(doc, SIGNAL(toggled(bool)), this, SLOT(slot_reset_doc()));
+    slot_filtr_reg("-", 0);
+    this->setCentralWidget(view);
+    centralWidget()->setMinimumWidth(700);
+    hide_columns();
 }
-MainWindow::~MainWindow()
+MainWindow::~MainWindow(){}
+void MainWindow::slot_reset_doc()
 {
+    if (doc->isChecked()){
+        view_area->show();
+        settings::getInatance().set_ws(win::two);
+    } else{
+        view_area->hide();
+        settings::getInatance().set_ws(win::one);
+    }
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -101,10 +161,6 @@ void MainWindow::slot_hol()
     editor_hollydays* edhol = new editor_hollydays();
     if(edhol->exec() == QDialog::Accepted){}
     delete edhol;
-}
-void MainWindow::slot_def_filtr()
-{
-    slot_filtr_reg("-", 0);
 }
 void MainWindow::slot_about()
 {
@@ -131,10 +187,13 @@ void MainWindow::slot_search()
     if (edflt->exec() == QDialog::Accepted){
          slot_filtr_reg(".*" + edflt->result() + ".*", 4);
          view->setColumnHidden(0, false);
-         view->setColumnWidth(3, settings::get_wight());
          view->scrollToBottom();
     }
     delete edflt;
+}
+void MainWindow::slot_def_filtr()
+{
+    slot_filtr_reg("-", 0);
 }
 void MainWindow::slot_filtr_reg(const QString& arg, int col)
 {
@@ -148,14 +207,11 @@ void MainWindow::slot_filtr_reg(const QString& arg, int col)
     QRegExp reg;
     reg.setPattern(arg);
     smod->setFilterRegExp(reg);
-    view->setColumnHidden(4, true);
-    view->setColumnHidden(0, true);
     view->setColumnWidth(1, 90);
     view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
-    //view->resizeRowsToContents();
-    view->setColumnWidth(3, settings::get_wight());
+    hide_columns();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
 }
@@ -169,28 +225,98 @@ void MainWindow::slot_filtr_str(const QString& arg, int col)
     smod->setDynamicSortFilter(true);
     smod->setSourceModel(model);
     smod->setFilterFixedString(arg);
-    view->setColumnHidden(4, true);
-    view->setColumnHidden(0, true);
     view->setColumnWidth(1, 90);
     view->setColumnWidth(2, 90);
     view->horizontalHeader()->setStretchLastSection(true);
     view->setSortingEnabled(true);
-    view->setColumnWidth(3, settings::get_wight());
+    hide_columns();
     connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this, SLOT(slot_set_pic()));
 }
 void MainWindow::slot_all()
 {
     slot_filtr_str("", 0);
-    view->setColumnHidden(0, false);
-    view->setColumnWidth(3, settings::get_wight() - 50);
+    set_flag(0, true);
+    hide_columns();
     view->setColumnWidth(0, 50);
     view->scrollToBottom();
 }
 void MainWindow::slot_opl()
 {
     slot_filtr_str("Да", 0);
-    view->setColumnWidth(3, settings::get_wight());
+    hide_columns();
     view->scrollToBottom();
 }
-
+void MainWindow::hide_columns()
+{
+    view->setColumnHidden(0, !t_status.at(0));
+    view->setColumnHidden(1, !t_status.at(1));
+    view->setColumnHidden(2, !t_status.at(2));
+    view->setColumnHidden(3, !t_status.at(3));
+    view->setColumnHidden(4, !t_status.at(4));
+    view->setColumnHidden(5, !t_status.at(5));
+    view->setColumnHidden(6, !t_status.at(6));
+    view->setColumnHidden(7, !t_status.at(7));
+    view->setColumnHidden(8, !t_status.at(8));
+    view->setColumnHidden(9, !t_status.at(9));
+    view->setColumnWidth(3, 150);
+}
+void MainWindow::slot_change_columns()
+{
+    t_status[0] = column0->isChecked();
+    t_status[1] = column1->isChecked();
+    t_status[2] = column2->isChecked();
+    t_status[3] = column3->isChecked();
+    t_status[4] = column4->isChecked();
+    t_status[5] = column5->isChecked();
+    t_status[6] = column6->isChecked();
+    t_status[7] = column7->isChecked();
+    t_status[8] = column8->isChecked();
+    t_status[9] = column9->isChecked();
+    hide_columns();
+}
+void MainWindow::set_flag(int arg, bool set)
+{
+    switch (arg) {
+    case 0:
+        t_status[0] = set;
+        column0->setChecked(set);
+        break;
+    case 1:
+        t_status[1] = set;
+        column1->setChecked(set);
+        break;
+    case 2:
+        t_status[2] = set;
+        column2->setChecked(set);
+        break;
+    case 3:
+        t_status[3] = set;
+        column3->setChecked(set);
+        break;
+    case 4:
+        t_status[4] = set;
+        column4->setChecked(set);
+        break;
+    case 5:
+        t_status[5] = set;
+        column5->setChecked(set);
+        break;
+    case 6:
+        t_status[6] = set;
+        column6->setChecked(set);
+        break;
+    case 7:
+        t_status[7] = set;
+        column7->setChecked(set);
+        break;
+    case 8:
+        t_status[8] = set;
+        column8->setChecked(set);
+        break;
+    case 9:
+        t_status[9] = set;
+        column9->setChecked(set);
+        break;
+    }
+}

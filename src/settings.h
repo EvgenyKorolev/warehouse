@@ -11,7 +11,7 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <memory>
-
+enum class win{one, two};
 class settings
 {
 public:
@@ -38,6 +38,8 @@ public:
     void get_image_dir(const QString& arg){image_dir = arg;}
     void get_db_dir(const QString& arg){db_dir = arg;}
     void get_db_name(const QString& arg){db_name = arg;}
+    win get_ws() const {return winstart;}
+    void set_ws(win);
 private:
     void create_base();
 
@@ -51,6 +53,7 @@ private:
     QString db_name{""};
     QSqlDatabase db;
     std::shared_ptr<QVector<QDate>> hollidays;
+    win winstart;
 };
 
 #endif // SETTINGS_H

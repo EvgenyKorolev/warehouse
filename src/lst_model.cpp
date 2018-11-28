@@ -12,7 +12,7 @@ int lst_model::rowCount(const QModelIndex &parent) const
 int lst_model::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 6;
+    return 10;
 }
 QVariant lst_model::data(const QModelIndex &index, int role) const
 {
@@ -28,7 +28,7 @@ QVariant lst_model::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->today_cost());
         }
         if (index.column() == 3){
-            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_text());
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto());
         }
         if (index.column() == 4){
             QString ret = model_data.at(static_cast<std::size_t>(index.row()))->get_surname() + " " +
@@ -37,7 +37,21 @@ QVariant lst_model::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(ret);
         }
         if (index.column() == 5){
-           return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_foto().scaled(140, 140, Qt::KeepAspectRatio));
+            return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_text());
+        }
+        if (index.column() == 6){
+           return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_info());
+        }
+        if (index.column() == 7){
+           return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_dop_cost());
+        }
+        if (index.column() == 8){
+           return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_cost());
+        }
+        if (index.column() == 9){
+            if (model_data.at(static_cast<std::size_t>(index.row()))->is_closed()){
+                return QVariant::fromValue(model_data.at(static_cast<std::size_t>(index.row()))->get_pay_data());
+            }
         }
     }
     if (role ==  Qt::UserRole) {
@@ -73,9 +87,19 @@ QVariant lst_model::headerData(int section, Qt::Orientation orientation, int rol
         case 2:
             return QVariant("Стоимость");
         case 3:
-            return QVariant("Клиент");
+            return QVariant("Информация");
         case 4:
+            return QVariant("ФИО Клиента");
+        case 5:
+            return QVariant("Фотография");
+        case 6:
             return QVariant("Доп. информация");
+        case 7:
+            return QVariant("Доп. стоимость");
+        case 8:
+            return QVariant("Cтоимость суток");
+        case 9:
+            return QVariant("Дата оплаты");
         }
     }
     return QVariant();
@@ -99,3 +123,4 @@ bool lst_model::removeRows(int row, int count, const QModelIndex & parent)
      this->layoutChanged();
      return true;
 }
+

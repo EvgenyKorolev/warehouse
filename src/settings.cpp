@@ -18,6 +18,7 @@ settings::settings()
         image_dir = db_dir + "images/";
         main_ini = QDir::homePath() + "/.warehouse.conf";
         db_name = "data.db3";
+        winstart = win::two;
         parse = false;
         if(!save_ini()) QMessageBox::information(nullptr, "Ошибка", "Не могу создать файл с настройками");
     }
@@ -36,6 +37,14 @@ settings::settings()
             st = ini.indexOf("db_name = ") + 10;
             sst = ini.indexOf('\n', st);
             db_name = ini.mid(st, sst - st);
+            st = ini.indexOf("win_start = ") + 12;
+            sst = ini.indexOf('\n', st);
+            QString tmp = ini.mid(st, sst - st);
+            if (tmp == "one"){
+                winstart = win::one;
+            } else {
+                winstart = win::two;
+            }
         } else {
             QMessageBox::information(nullptr, "Отладка", "Не открывается файл с настройками");
         }
@@ -71,7 +80,12 @@ bool settings::save_ini() const
 {
     QFile f_ini(main_ini);
     if(f_ini.open(QIODevice::WriteOnly)){
-        QString ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" +  "db_name = " + db_name + "\n";
+        QString ini{""};
+        if (winstart == win::one){
+            ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" +  "db_name = " + db_name + "\n" + "win_start = one";
+        } else {
+            ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" +  "db_name = " + db_name + "\n" + "win_start = two";
+        }
         QTextStream stream(&f_ini);
         stream << ini;
         f_ini.close();
@@ -177,4 +191,9 @@ bool settings::del_holliday(const QDate& arg)
         return true;
     }
     return false;
+}
+void settings::set_ws(win arg)
+{
+    winstart = arg;
+    save_ini();
 }
