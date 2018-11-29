@@ -5,5 +5,6 @@
         <file>images/w.png</file>
         <file>images/w2.png</file>
         <file>images/s.png</file>
+        <file>images/warehouse.ico</file>
     </qresource>
 </RCC>

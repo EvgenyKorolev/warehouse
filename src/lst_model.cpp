@@ -87,11 +87,11 @@ QVariant lst_model::headerData(int section, Qt::Orientation orientation, int rol
         case 2:
             return QVariant("Стоимость");
         case 3:
-            return QVariant("Информация");
+            return QVariant("Фотография");
         case 4:
             return QVariant("ФИО Клиента");
         case 5:
-            return QVariant("Фотография");
+            return QVariant("Информация");
         case 6:
             return QVariant("Доп. информация");
         case 7:

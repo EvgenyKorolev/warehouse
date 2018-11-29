@@ -1,6 +1,7 @@
 #include "proxy_data.h"
 #include "functions.h"
 #include <QSqlRecord>
+#include <QMessageBox>
 
 proxy_data::proxy_data()
 {

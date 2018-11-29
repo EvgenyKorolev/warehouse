@@ -8,7 +8,6 @@
 #include <QDir>
 #include <QDate>
 #include <QTextStream>
-#include <QMessageBox>
 #include <QSqlQuery>
 #include <memory>
 enum class win{one, two};
@@ -19,7 +18,7 @@ public:
         static settings _instance;
         return _instance;
     }
-    static int get_wight() {return 300;}
+    int get_wight() {return wight;}
     bool is_hollyday(const QDate&) const;
     bool add_hollyday(const QDate&);
     bool del_holliday(const QDate&);
@@ -54,6 +53,7 @@ private:
     QSqlDatabase db;
     std::shared_ptr<QVector<QDate>> hollidays;
     win winstart;
+    int wight{250};
 };
 
 #endif // SETTINGS_H

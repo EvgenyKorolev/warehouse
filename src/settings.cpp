@@ -2,6 +2,7 @@
 #include "functions.h"
 #include <algorithm>
 #include <QSqlRecord>
+#include <QMessageBox>
 
 settings::settings()
 {
@@ -45,6 +46,10 @@ settings::settings()
             } else {
                 winstart = win::two;
             }
+            st = ini.indexOf("f_wight = ") + 10;
+            sst = ini.indexOf('\n', st);
+            wight = ini.mid(st, sst - st).toInt();
+            if (wight < 50) wight = 250;
         } else {
             QMessageBox::information(nullptr, "Отладка", "Не открывается файл с настройками");
         }
@@ -82,9 +87,11 @@ bool settings::save_ini() const
     if(f_ini.open(QIODevice::WriteOnly)){
         QString ini{""};
         if (winstart == win::one){
-            ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" +  "db_name = " + db_name + "\n" + "win_start = one";
+            ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
+                    db_name + "\n" + "win_start = one" + "\n" + "f_wight = " + QString::number(wight) + "\n";
         } else {
-            ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" +  "db_name = " + db_name + "\n" + "win_start = two";
+            ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
+                    db_name + "\n" + "win_start = two" + "\n" + "f_wight = " + QString::number(wight) + "\n";
         }
         QTextStream stream(&f_ini);
         stream << ini;

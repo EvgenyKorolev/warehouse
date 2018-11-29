@@ -12,6 +12,7 @@
 #include <QScrollArea>
 #include <QDockWidget>
 #include <QHeaderView>
+#include <QMessageBox>
 #include <QPixmap>
 #include <QLabel>
 #include <QToolBar>
@@ -259,7 +260,7 @@ void MainWindow::hide_columns()
     view->setColumnHidden(7, !t_status.at(7));
     view->setColumnHidden(8, !t_status.at(8));
     view->setColumnHidden(9, !t_status.at(9));
-    view->setColumnWidth(3, 150);
+    view->setColumnWidth(3, settings::getInatance().get_wight());
 }
 void MainWindow::slot_change_columns()
 {

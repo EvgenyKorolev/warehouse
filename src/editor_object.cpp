@@ -10,6 +10,7 @@
 #include <QGraphicsView>
 #include <QFileDialog>
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QLabel>
 editor_object::editor_object(QWidget* par) : QDialog(par)
 {
