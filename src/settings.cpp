@@ -50,6 +50,12 @@ settings::settings()
             sst = ini.indexOf('\n', st);
             wight = ini.mid(st, sst - st).toInt();
             if (wight < 50) wight = 250;
+
+
+            st = ini.indexOf("f_hight = ") + 10;
+            sst = ini.indexOf('\n', st);
+            hight = ini.mid(st, sst - st).toInt();
+            if (hight < 10) hight = 150;
         } else {
             QMessageBox::information(nullptr, "Отладка", "Не открывается файл с настройками");
         }
@@ -88,10 +94,12 @@ bool settings::save_ini() const
         QString ini{""};
         if (winstart == win::one){
             ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
-                    db_name + "\n" + "win_start = one" + "\n" + "f_wight = " + QString::number(wight) + "\n";
+                    db_name + "\n" + "win_start = one" + "\n" + "f_wight = " + QString::number(wight) + "\n" +
+                    "f_hight = " + QString::number(hight) + "\n";
         } else {
             ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
-                    db_name + "\n" + "win_start = two" + "\n" + "f_wight = " + QString::number(wight) + "\n";
+                    db_name + "\n" + "win_start = two" + "\n" + "f_wight = " + QString::number(wight) + "\n" +
+                    "f_hight = " + QString::number(hight) + "\n";
         }
         QTextStream stream(&f_ini);
         stream << ini;

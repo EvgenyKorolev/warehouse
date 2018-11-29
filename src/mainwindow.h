@@ -25,6 +25,7 @@ public slots:
     void slot_opl();
     void slot_change_columns();
     void slot_reset_doc();
+    void slot_size_chenge();
 private:
     void hide_columns();
     void set_flag(int, bool);

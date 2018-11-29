@@ -19,6 +19,9 @@ public:
         return _instance;
     }
     int get_wight() {return wight;}
+    void set_wight(int arg){wight = arg;}
+    int get_hight() {return hight;}
+    void set_hight(int arg){hight = arg;}
     bool is_hollyday(const QDate&) const;
     bool add_hollyday(const QDate&);
     bool del_holliday(const QDate&);
@@ -54,6 +57,7 @@ private:
     std::shared_ptr<QVector<QDate>> hollidays;
     win winstart;
     int wight{250};
+    int hight{150};
 };
 
 #endif // SETTINGS_H

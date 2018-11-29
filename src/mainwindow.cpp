@@ -77,9 +77,11 @@ MainWindow::MainWindow(QWidget *parent)
         QAction* act_all = new QAction("Все");
         QAction* act_no = new QAction("Неоплаченные");
         QAction* act_opl = new QAction("Оплаченные");
+    QAction* resize_table = new QAction("Размер ячеек");
     QObject::connect(act_all, SIGNAL(triggered(bool)), this, SLOT(slot_all()));
     QObject::connect(act_opl, SIGNAL(triggered(bool)), this, SLOT(slot_opl()));
     QObject::connect(act_no, SIGNAL(triggered(bool)), this, SLOT(slot_def_filtr()));
+    QObject::connect(resize_table, SIGNAL(triggered(bool)), this, SLOT(slot_size_chenge()));
     sort_menu->addAction(act_no);
     sort_menu->addAction(act_all);
     sort_menu->addAction(act_opl);
@@ -104,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(reset_push, SIGNAL(triggered(bool)), this, SLOT(slot_def_filtr()));
     QObject::connect(serch_push, SIGNAL(triggered(bool)), this, SLOT(slot_search()));
     view->verticalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-    view->verticalHeader()->setDefaultSectionSize(150);
+    view->verticalHeader()->setDefaultSectionSize(settings::getInatance().get_hight());
     view->setSelectionMode(QAbstractItemView::ExtendedSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     model = new lst_model();
@@ -129,6 +131,8 @@ MainWindow::MainWindow(QWidget *parent)
         slot_reset_doc();
     }
     main_tb->addMenu(show_doc);
+    main_tb->addSeparator();
+    main_tb->addAction(resize_table);
     QObject::connect(doc, SIGNAL(toggled(bool)), this, SLOT(slot_reset_doc()));
     slot_filtr_reg("-", 0);
     this->setCentralWidget(view);
@@ -320,4 +324,17 @@ void MainWindow::set_flag(int arg, bool set)
         column9->setChecked(set);
         break;
     }
+}
+void MainWindow::slot_size_chenge()
+{
+    size_select* sed = new size_select(settings::getInatance().get_wight(), settings::getInatance().get_hight());
+    if (sed->exec() == QDialog::Accepted){
+        std::pair<int, int> ret = sed->result();
+        settings::getInatance().set_wight(ret.first);
+        settings::getInatance().set_hight(ret.second);
+        view->setColumnWidth(3, settings::getInatance().get_wight());
+        view->verticalHeader()->setDefaultSectionSize(settings::getInatance().get_hight());
+        settings::getInatance().save_ini();
+    }
+    delete sed;
 }
