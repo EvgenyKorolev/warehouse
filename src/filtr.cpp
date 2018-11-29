@@ -1,6 +1,7 @@
 #include "filtr.h"
 #include <QPushButton>
 #include <QGridLayout>
+#include <QFormLayout>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QDateEdit>
@@ -41,7 +42,6 @@ QString filtr::result() const
 
 size_select::size_select(int weidth, int heidth, QWidget* par) : QDialog(par)
 {
-    this->resize(500, 100);
     this->setWindowTitle("Настройка ячейки");
     this->setWindowIcon(QIcon(":/images/w.png"));
     ed_weidth = new QLineEdit();
@@ -50,21 +50,22 @@ size_select::size_select(int weidth, int heidth, QWidget* par) : QDialog(par)
     ed_heidth->setInputMask("0000");
     ed_heidth->setText(QString::number(heidth));
     ed_weidth->setText(QString::number(weidth));
-    QLabel* wlab = new QLabel();
-    wlab->setText("Ширина: ");
-    QLabel* hlab = new QLabel();
-    hlab->setText("Высота: ");
-    QGridLayout* main_lay = new QGridLayout();
+    QVBoxLayout* main_lay = new QVBoxLayout();
     QPushButton* push_ok = new QPushButton("Применить");
     QPushButton* push_cancel = new QPushButton("Отмена");
     QObject::connect(push_ok, SIGNAL(clicked()), this, SLOT(slot_set()));
     QObject::connect(push_cancel, SIGNAL(clicked()), this, SLOT(reject()));
-    main_lay->addWidget(wlab, 0, 0);
-    main_lay->addWidget(ed_weidth, 0, 1);
-    main_lay->addWidget(hlab, 1, 0);
-    main_lay->addWidget(ed_heidth, 1, 1);
-    main_lay->addWidget(push_ok, 2, 0);
-    main_lay->addWidget(push_cancel, 2, 1);
+    QLabel* titl = new QLabel();
+    titl->setText("Настройка размеров ячейки");
+    main_lay->addWidget(titl);
+    QFormLayout* fl = new QFormLayout();
+    fl->addRow(tr("&Ширина: "), ed_weidth);
+    fl->addRow(tr("Высота: "), ed_heidth);
+    QHBoxLayout* push_lay = new QHBoxLayout();
+    push_lay->addWidget(push_ok);
+    push_lay->addWidget(push_cancel);
+    main_lay->addLayout(fl);
+    main_lay->addLayout(push_lay);
     this->setLayout(main_lay);
 }
 size_select::~size_select()
