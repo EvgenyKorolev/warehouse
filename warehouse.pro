@@ -63,8 +63,8 @@ RESOURCES += \
 
 win32:{
     RC_ICONS = $$PWD/images/warehouse.ico
-    VERSION = 0.9.95
+    VERSION = 0.9.96
     QMAKE_TARGET_PRODUCT = warehouse
-    QMAKE_TARGET_DESCRIPTION = Program for werehouse
+    QMAKE_TARGET_DESCRIPTION = Program werehouse
     QMAKE_TARGET_COPYRIGHT = Evgeny Korolev E-mail: root@kyrych.ru
 }
