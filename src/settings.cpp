@@ -212,3 +212,7 @@ void settings::set_ws(win arg)
     winstart = arg;
     save_ini();
 }
+void settings::server_fail(const QString& arg) const
+{
+    QMessageBox::information(nullptr, "Внимание", arg);
+}

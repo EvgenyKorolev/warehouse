@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -37,7 +37,8 @@ SOURCES += \
     src/editor_hollydays.cpp \
     src/filtr.cpp \
     src/yes_no.cpp \
-    src/delegats.cpp
+    src/delegats.cpp \
+    src/server.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -51,7 +52,8 @@ HEADERS += \
     src/editor_hollydays.h \
     src/filtr.h \
     src/yes_no.h \
-    src/delegats.h
+    src/delegats.h \
+    src/server.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

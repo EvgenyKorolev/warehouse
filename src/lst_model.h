@@ -17,7 +17,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
 private:
-    proxy_data model_data;
+    proxy_data* model_data;
 };
 
 #endif // LST_MODEL_H

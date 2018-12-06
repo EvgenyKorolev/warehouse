@@ -113,8 +113,6 @@ MainWindow::MainWindow(QWidget *parent)
     view->setItemDelegateForColumn(5, new show_delegat());
     view->setItemDelegateForColumn(3, new pic_delegat());
     PicLabel = new QLabel();
-    connect(view->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-            this, SLOT(slot_set_pic()));
     view_area = new QDockWidget("Клиеты", this);
     view_area->setWidget(PicLabel);
     PicLabel->setFixedSize(QSize(600,600));

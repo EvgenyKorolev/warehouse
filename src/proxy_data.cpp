@@ -12,6 +12,7 @@ proxy_data::proxy_data()
     if (!query.exec("SELECT * FROM persisted;")){
          QMessageBox::information(nullptr, "Внимание", "Что-то не то с чтением базы данных");
     }
+    QMutexLocker locker(data_lock);
     while(query.next()){
         std::shared_ptr<persisted_object> ret = std::make_shared<persisted_object>(persisted_object());
         rec = query.record();
@@ -54,7 +55,8 @@ void proxy_data::append(std::shared_ptr<persisted_object> arg)
             QString::number(pay_data.toMSecsSinceEpoch()) + "', '" + my::base64_plus(arg->get_info()) + "', '" + QString::number(arg->get_cost()) + "', '" +
             QString::number(arg->get_dop_cost()) + "', '" + QString::number(arg->get_many()) + "', '" + closed + "', '" +
             arg->get_uniq()  + "', '" + my::base64_plus(arg->get_foto_name()) + "', '" + QString::number(arg->get_hash()) + "');";
-            if (tmps.db_execute(prep, "Что-то не то с добавлением записи в базу данных.")) data.append(arg);
+    QMutexLocker locker(data_lock);
+    if (tmps.db_execute(prep, "Что-то не то с добавлением записи в базу данных.")) data.append(arg);
 };
 void proxy_data::insert(std::shared_ptr<persisted_object> arg)
 {
@@ -70,6 +72,7 @@ void proxy_data::insert(std::shared_ptr<persisted_object> arg)
             QString::number(arg->get_dop_cost()) + "', many = '" + QString::number(arg->get_many()) + "', closed = '" + closed + "', foto_name = '" +
             my::base64_plus(arg->get_foto_name()) + "', hash = '" +
             QString::number(arg->get_hash()) + "' WHERE uniq ='" + arg->get_uniq() + "';";
+    QMutexLocker locker(data_lock);
     if (tmps.db_execute(prep, "Что-то не то с обновлением записи в базе данных.")){
         auto it = data.begin();
         while (it != data.end()){
@@ -90,22 +93,32 @@ void proxy_data::insert(std::size_t row, std::shared_ptr<persisted_object> arg)
     }
     insert(arg);
 }
-void proxy_data::del(std::shared_ptr<persisted_object> arg)
+bool proxy_data::del(std::shared_ptr<persisted_object> arg)
 {
+    return del(arg->get_uniq());
+}
+bool proxy_data::del(const QString& un)
+{
+    int co{0};
     settings& tmps = settings::getInatance();
-    QString prep = "DELETE FROM persisted WHERE uniq ='" + arg->get_uniq() + "';";
+    QString prep = "DELETE FROM persisted WHERE uniq ='" + un + "';";
+    QMutexLocker locker(data_lock);
     if (tmps.db_execute(prep, "Что-то не то с удалением записи из базы данных.")){
-        if (arg->get_fname() != ""){
-            QFile fl(settings::getInatance().get_image_dir() + arg->get_foto_name());
-            fl.remove();
-        }
+        ++co;
         auto it = data.begin();
         while (it != data.end()){
-            if ((*it)->get_uniq() == arg->get_uniq()){
+            if ((*it)->get_uniq() == un){
+                if ((*it)->get_foto_name() != ""){
+                    QFile fl(settings::getInatance().get_image_dir() + (*it)->get_foto_name());
+                    fl.remove();
+                }
                data.erase(it);
+               ++co;
                 break;
             }
             ++it;
         }
     }
+    if (co == 2) return true;
+    return false;
 }

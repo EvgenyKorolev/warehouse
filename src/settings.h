@@ -42,6 +42,7 @@ public:
     void get_db_name(const QString& arg){db_name = arg;}
     win get_ws() const {return winstart;}
     void set_ws(win);
+    void server_fail(const QString& arg) const;
 private:
     void create_base();
 

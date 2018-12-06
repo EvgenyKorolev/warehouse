@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QImage>
 #include <QString>
+#include <QJsonObject>
 #include <random>
 class persisted_object
 {
@@ -71,6 +72,8 @@ public:
     void close();
     QString get_uniq() const {return uniq;}
     void set_uniq(const QString& arg) {uniq = arg;}
+    QJsonObject make_json() const;
+    void load_json(const QJsonObject& arg);
 private:
     std::tuple<QString, QString, QString> person; // Данные клиента
     QDate start_data; // Дата начала хранения
