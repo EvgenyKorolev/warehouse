@@ -5,13 +5,14 @@
 #include <QMap>
 class QTcpServer;
 class QTcpSocket;
+class MainWindow;
 class proxy_data;
 class settings;
 class server : public QObject
 {
     Q_OBJECT
 public:
-    explicit server(quint16 port, proxy_data* pd_, settings* sd_, QObject *parent = nullptr);
+    explicit server(quint16 port, proxy_data* pd_, settings* sd_, MainWindow* mw_, QObject *parent = nullptr);
     virtual ~server();
 
 signals:
@@ -22,6 +23,7 @@ private slots:
 private:
     proxy_data* pd;
     settings* sd;
+    MainWindow* mw;
     QTcpServer *m_tcpServer;
     int server_status;
     quint16 listen_port;

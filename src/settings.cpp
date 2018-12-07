@@ -1,4 +1,4 @@
-#include "settings.h"
+﻿#include "settings.h"
 #include "functions.h"
 #include <algorithm>
 #include <QSqlRecord>
@@ -50,12 +50,17 @@ settings::settings()
             sst = ini.indexOf('\n', st);
             wight = ini.mid(st, sst - st).toInt();
             if (wight < 50) wight = 250;
-
-
             st = ini.indexOf("f_hight = ") + 10;
             sst = ini.indexOf('\n', st);
             hight = ini.mid(st, sst - st).toInt();
             if (hight < 10) hight = 150;
+            st = ini.indexOf("s_port = ") + 9;
+            sst = ini.indexOf('\n', st);
+            port_ = ini.mid(st, sst - st).toUShort();
+            if (port_ < 1024) port_ = 6666;
+            st = ini.indexOf("s_pass = ") + 9;
+            sst = ini.indexOf('\n', st);
+            pass_ = ini.mid(st, sst - st);
         } else {
             QMessageBox::information(nullptr, "Отладка", "Не открывается файл с настройками");
         }
@@ -95,11 +100,13 @@ bool settings::save_ini() const
         if (winstart == win::one){
             ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
                     db_name + "\n" + "win_start = one" + "\n" + "f_wight = " + QString::number(wight) + "\n" +
-                    "f_hight = " + QString::number(hight) + "\n";
+                    "f_hight = " + QString::number(hight) + "\n" +
+                    "s_port = " + QString::number(port_) + "\n" + "s_pass = " + QString::number(hight) + "\n";
         } else {
             ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
                     db_name + "\n" + "win_start = two" + "\n" + "f_wight = " + QString::number(wight) + "\n" +
-                    "f_hight = " + QString::number(hight) + "\n";
+                    "f_hight = " + QString::number(hight) + "\n" +
+                    "s_port = " + QString::number(port_) + "\n" + "s_pass = " + pass_ + "\n";
         }
         QTextStream stream(&f_ini);
         stream << ini;

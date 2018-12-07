@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     splash.show();
     settings::getInatance();
     proxy_data::getInstance();
-    server my_server(6666, &proxy_data::getInstance(), &settings::getInatance());
     MainWindow w;
+    server my_server(6666, &proxy_data::getInstance(), &settings::getInatance(), &w);
     QObject::connect(&my_server, SIGNAL(res()), &w, SLOT(slot_def_filtr();));
     splash.finish(&w);
     w.show();

@@ -36,10 +36,14 @@ public:
     QString get_image_dir() const {return  image_dir;}
     QString get_db_dir() const {return  db_dir;}
     QString get_db_name() const {return  db_name;}
-    void get_main_ini(const QString& arg){main_ini = arg;}
-    void get_image_dir(const QString& arg){image_dir = arg;}
-    void get_db_dir(const QString& arg){db_dir = arg;}
-    void get_db_name(const QString& arg){db_name = arg;}
+    quint16 get_port() const {return  port_;}
+    QString get_pass() const {return  pass_;}
+    void set_main_ini(const QString& arg){main_ini = arg;}
+    void set_image_dir(const QString& arg){image_dir = arg;}
+    void set_db_dir(const QString& arg){db_dir = arg;}
+    void set_db_name(const QString& arg){db_name = arg;}
+    void set_port(quint16 arg){port_ = arg;}
+    void set_pass(const QString& arg){pass_ = arg;}
     win get_ws() const {return winstart;}
     void set_ws(win);
     void server_fail(const QString& arg) const;
@@ -59,6 +63,8 @@ private:
     win winstart;
     int wight{250};
     int hight{150};
+    quint16 port_;
+    QString pass_;
 };
 
 #endif // SETTINGS_H

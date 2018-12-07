@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     QAction* reset_push = new QAction("Сброс");
     QAction* hollyday_push = new QAction("Праздники");
     QAction* about_push = new QAction("О программе");
+    QAction* server_push = new QAction("Сеть");
     QMenu* sort_menu = new QMenu("Показать");
         QAction* act_all = new QAction("Все");
         QAction* act_no = new QAction("Неоплаченные");
@@ -82,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(act_opl, SIGNAL(triggered(bool)), this, SLOT(slot_opl()));
     QObject::connect(act_no, SIGNAL(triggered(bool)), this, SLOT(slot_def_filtr()));
     QObject::connect(resize_table, SIGNAL(triggered(bool)), this, SLOT(slot_size_chenge()));
+    QObject::connect(server_push, SIGNAL(triggered(bool)), this, SLOT(slot_serv_set()));
     sort_menu->addAction(act_no);
     sort_menu->addAction(act_all);
     sort_menu->addAction(act_opl);
@@ -95,9 +97,9 @@ MainWindow::MainWindow(QWidget *parent)
     main_tb->addSeparator();
     main_tb->addAction(hollyday_push);
     main_tb->addSeparator();
-    main_tb->addAction(about_push);
-    main_tb->addSeparator();
     main_tb->addMenu(show_column);
+    main_tb->addSeparator();
+    main_tb->addAction(server_push);
     main_tb->addSeparator();
     view = new lst_view(this);
     QObject::connect(add_push, SIGNAL(triggered(bool)), view, SLOT(slot_add()));
@@ -131,6 +133,8 @@ MainWindow::MainWindow(QWidget *parent)
     main_tb->addMenu(show_doc);
     main_tb->addSeparator();
     main_tb->addAction(resize_table);
+    main_tb->addSeparator();
+    main_tb->addAction(about_push);
     QObject::connect(doc, SIGNAL(toggled(bool)), this, SLOT(slot_reset_doc()));
     slot_filtr_reg("-", 0);
     this->setCentralWidget(view);
@@ -332,6 +336,17 @@ void MainWindow::slot_size_chenge()
         settings::getInatance().set_hight(ret.second);
         view->setColumnWidth(3, settings::getInatance().get_wight());
         view->verticalHeader()->setDefaultSectionSize(settings::getInatance().get_hight());
+        settings::getInatance().save_ini();
+    }
+    delete sed;
+}
+void MainWindow::slot_serv_set()
+{
+    server_set* sed = new server_set(settings::getInatance().get_port(), settings::getInatance().get_pass());
+    if (sed->exec() == QDialog::Accepted){
+        std::pair<quint16, QString> ret = sed->result();
+        settings::getInatance().set_port(ret.first);
+        settings::getInatance().set_pass(ret.second);
         settings::getInatance().save_ini();
     }
     delete sed;
