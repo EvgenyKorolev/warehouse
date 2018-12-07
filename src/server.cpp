@@ -72,11 +72,6 @@ void server::slotDataClient()
                 ++it;
             }
             os << "}\n";
-            QByteArray ba;
-            QBuffer buffer(&ba);
-            buffer.open(QIODevice::WriteOnly);
-            pd->at(static_cast<std::size_t>(str_ask.right(str_ask.size() - 4).toInt()))->get_foto().save(&buffer, "PNG");
-            os << "foto: " <<  ba.toBase64()  << "\n";
         }
         if (str_ask.left(3) == "del"){
             if (pd->del(str_ask.right(str_ask.size() - 4).left(str_ask.size() - 5))){
@@ -86,11 +81,62 @@ void server::slotDataClient()
                 os << "delete fail\n";
             }
         }
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (str_ask.left(3) == "app"){
-            QString ant = str_ask.right(str_ask.size() - 4);
+            QString key = str_ask.left(str_ask.indexOf(';')).right(4);
+            QString str_data = str_ask.right(str_ask.size() - str_ask.indexOf(';'));
+            QByteArray tmpa;
+            tmpa.append(str_ask.right(str_ask.size() - 4).left(str_ask.size() - 5));
+            QByteArray tmpb;
+            tmpb = tmpb.fromBase64(tmpa);
+
+!!!!
+            QImage image;
+            QByteArray ba;
+            QBuffer buffer(&ba);
+            buffer.open(QIODevice::ReadOnly);
+            image.load(&buffer, "PNG");
+            pd->
         }
         if (str_ask.left(3) == "upd"){
+            QString ant = str_ask.right(str_ask.size() - 4);
 
+        }
+        if (str_ask.left(3) == "sft"){
+//            QString key = str_ask.left(str_ask.indexOf(';')).right(4);
+//            QString str_data = str_ask.right(str_ask.size() - str_ask.indexOf(';'));
+//            QByteArray tmpa;
+//            tmpa.append(str_ask.right(str_ask.size() - 4).left(str_ask.size() - 5));
+//            QByteArray tmpb;
+//            tmpb = tmpb.fromBase64(tmpa);
+
+
+//            QImage image;
+//            QByteArray ba;
+//            QBuffer buffer(&ba);
+//            buffer.open(QIODevice::ReadOnly);
+//            image.load(&buffer, "PNG");
+//            pd->
+        }
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (str_ask.left(3) == "gft"){
+            QByteArray ba;
+            QBuffer buffer(&ba);
+            buffer.open(QIODevice::WriteOnly);
+            pd->at(static_cast<std::size_t>(str_ask.right(str_ask.size() - 4).toInt()))->get_foto().save(&buffer, "PNG");
+            os << ba.toBase64()  << "\n";
+        }
+        if (str_ask.left(3) == "hol"){
+            std::shared_ptr<QVector<QDate>> hls = sd->lst_holliday();
+            auto it = hls->begin();
+            os << "data: \n";
+            QDateTime tmpd;
+            while (it != hls->end()) {
+                tmpd.setDate(*it);
+                os << QString::number(tmpd.toMSecsSinceEpoch()) << ";";
+                ++it;
+            }
+            os << "\n";
         }
         if (str_ask.left(3) == "cls"){
             os << "connection close\n";

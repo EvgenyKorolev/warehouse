@@ -87,8 +87,8 @@ server_set::server_set(quint16 port_, const QString& pass_, QWidget* par) : QDia
     this->setWindowIcon(QIcon(":/images/w.png"));
     ed_pass = new QLineEdit();
     ed_port = new QLineEdit();
-    ed_port->setInputMask("00000000");
-    ed_pass->setInputMask("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+    ed_port->setInputMask("000000");
+    ed_pass->setInputMask("nnnnnnnnnnnnnnnn");
     ed_port->setText(QString::number(port_));
     ed_pass->setText(pass_);
     QVBoxLayout* main_lay = new QVBoxLayout();

@@ -163,7 +163,7 @@ QJsonObject persisted_object::make_json() const
             ret.insert("closed", QJsonValue("false"));
     }
     ret.insert("uniq", QJsonValue(uniq));
-    //ret.insert("foto", QJsonValue(foto)); // В текущей реализации фото вытягивается отдельно, надо помнить об этом :(
+    ret.insert("foto", QJsonValue(foto));
     ret.insert("hash", QJsonValue(QString::number(hash)));
     return ret;
 }
@@ -185,6 +185,6 @@ void persisted_object::load_json(const QJsonObject& arg)
        closed = false;
     }
     uniq = arg.value("uniq").toString();
-    //foto = arg.value("foto").toString(); // В текущей реализации фото добавляется отдельно, надо помнить об этом :(
+    //foto = arg.value("foto").toString();
     hash = arg.value("hash").toString().toInt();
 }
