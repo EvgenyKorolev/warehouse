@@ -16,6 +16,7 @@ public:
     int size() const;
     int count() const;
     std::shared_ptr<persisted_object> at(std::size_t arg) const;
+    std::shared_ptr<persisted_object> at(const QString& un) const;
     void append(std::shared_ptr<persisted_object> arg);
     void insert(std::shared_ptr<persisted_object> arg);
     void insert(std::size_t row, std::shared_ptr<persisted_object> arg);

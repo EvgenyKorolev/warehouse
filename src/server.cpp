@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QJsonDocument>
 #include <QBuffer>
 
 server::server(quint16 port, proxy_data *pd_, settings *sd_, MainWindow *mw_, QObject *parent) : QObject(parent)
@@ -53,7 +54,7 @@ void server::slotDataClient()
     os.setAutoDetectUnicode(true);
     if(!av_tcpClients.contains(idusersocs)){
         QString c_hash = clientSocket->readAll();
-        if (c_hash == (sd->get_pass() + "\n")){            // Тут нужна будет проверка аутентификации !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! c_hash == QByteArray()
+        if (c_hash == (sd->get_pass() + "\n")){
             av_tcpClients.insert(idusersocs);
             os << "authentication success\n";
         } else {
@@ -83,40 +84,31 @@ void server::slotDataClient()
         }
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (str_ask.left(3) == "app"){
+            QByteArray ba;
+            ba.append(str_ask.right(str_ask.size() - 4));
+            QJsonDocument document = QJsonDocument::fromJson(ba);
+            std::shared_ptr<persisted_object> tmpl(new persisted_object());
+            tmpl->load_json(document.object());
+            pd->append(tmpl);
+        }
+        if (str_ask.left(3) == "upd"){
+            QByteArray ba;
+            ba.append(str_ask.right(str_ask.size() - 4));
+            QJsonDocument document = QJsonDocument::fromJson(ba);
+            pd->at(document.object().value("uniq").toString())->load_json(document.object());
+        }
+        if (str_ask.left(3) == "sft"){
             QString key = str_ask.left(str_ask.indexOf(';')).right(4);
             QString str_data = str_ask.right(str_ask.size() - str_ask.indexOf(';'));
             QByteArray tmpa;
             tmpa.append(str_ask.right(str_ask.size() - 4).left(str_ask.size() - 5));
             QByteArray tmpb;
+            QBuffer buffer(&tmpb);
             tmpb = tmpb.fromBase64(tmpa);
-
-!!!!
             QImage image;
-            QByteArray ba;
-            QBuffer buffer(&ba);
             buffer.open(QIODevice::ReadOnly);
             image.load(&buffer, "PNG");
-            pd->
-        }
-        if (str_ask.left(3) == "upd"){
-            QString ant = str_ask.right(str_ask.size() - 4);
-
-        }
-        if (str_ask.left(3) == "sft"){
-//            QString key = str_ask.left(str_ask.indexOf(';')).right(4);
-//            QString str_data = str_ask.right(str_ask.size() - str_ask.indexOf(';'));
-//            QByteArray tmpa;
-//            tmpa.append(str_ask.right(str_ask.size() - 4).left(str_ask.size() - 5));
-//            QByteArray tmpb;
-//            tmpb = tmpb.fromBase64(tmpa);
-
-
-//            QImage image;
-//            QByteArray ba;
-//            QBuffer buffer(&ba);
-//            buffer.open(QIODevice::ReadOnly);
-//            image.load(&buffer, "PNG");
-//            pd->
+            pd->at(key)->add_photo(image);
         }
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (str_ask.left(3) == "gft"){

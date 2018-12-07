@@ -7,6 +7,5 @@ QString base64_plus(const QString& arg);
 QString base64_minus(const QString& arg);
 QString base64_plus(const QString&& arg);
 QString base64_minus(const QString&& arg);
-QJsonObject parse_str(const QString&& arg);
 }
 #endif // FUNCTIONS_H

@@ -2,6 +2,7 @@
 #include "functions.h"
 #include <QSqlRecord>
 #include <QMessageBox>
+#include <algorithm>
 
 proxy_data::proxy_data()
 {
@@ -40,8 +41,17 @@ int proxy_data::size() const {return data.size();};
 int proxy_data::count() const {return data.count();};
 std::shared_ptr<persisted_object> proxy_data::at(std::size_t arg) const
 {
-    return data.at(static_cast<int>(arg));
+    if (static_cast<int>(arg) < data.size()){
+       return data.at(static_cast<int>(arg));
+    } else return std::make_shared<persisted_object>(new persisted_object());
 };
+std::shared_ptr<persisted_object> proxy_data::at(const QString& un) const
+{
+    std::shared_ptr<persisted_object> ret = *std::find_if(data.begin(), data.end(), [&un](std::shared_ptr<persisted_object> arg)->bool{return arg->get_uniq() == un;});
+    if ( &ret != data.end()){
+        return ret;
+    } else return std::make_shared<persisted_object>(new persisted_object());
+}
 void proxy_data::append(std::shared_ptr<persisted_object> arg)
 {
     settings& tmps = settings::getInatance();
