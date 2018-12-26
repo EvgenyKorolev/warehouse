@@ -47,6 +47,7 @@ public:
     win get_ws() const {return winstart;}
     void set_ws(win);
     void server_fail(const QString& arg) const;
+    bool hol_is_pay() const {return pay_hollidays != "false";}
 private:
     void create_base();
 
@@ -58,6 +59,7 @@ private:
     QString image_dir{""};
     QString db_dir{""};
     QString db_name{""};
+    QString pay_hollidays{"true"}; // считать ли выходные платными (платные выходные)
     QSqlDatabase db;
     std::shared_ptr<QVector<QDate>> hollidays;
     win winstart;

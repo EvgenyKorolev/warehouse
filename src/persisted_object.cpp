@@ -121,7 +121,11 @@ unsigned persisted_object::today_cost() const
     QDate tmp = start_data;
     if (closed) return many;
     while (tmp <= QDate::currentDate()){
-        if (!tmps.is_hollyday(tmp) && tmp.dayOfWeek() != 6 && tmp.dayOfWeek() != 7) ret += cost;
+        if (settings::getInatance().hol_is_pay()){
+            if (!tmps.is_hollyday(tmp)) ret += cost;
+        } else {
+            if (!tmps.is_hollyday(tmp) && tmp.dayOfWeek() != 6 && tmp.dayOfWeek() != 7) ret += cost;
+        }
         tmp = tmp.addDays(1);
     }
     ret += dop_cost;

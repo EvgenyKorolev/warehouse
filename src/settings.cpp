@@ -20,6 +20,7 @@ settings::settings()
         main_ini = QDir::homePath() + "/.warehouse.conf";
         db_name = "data.db3";
         winstart = win::two;
+        pay_hollidays = "true";
         parse = false;
         if(!save_ini()) QMessageBox::information(nullptr, "Ошибка", "Не могу создать файл с настройками");
     }
@@ -61,6 +62,10 @@ settings::settings()
             st = ini.indexOf("s_pass = ") + 9;
             sst = ini.indexOf('\n', st);
             pass_ = ini.mid(st, sst - st);
+            st = ini.indexOf("p_holl = ") + 9;
+            sst = ini.indexOf('\n', st);
+            pay_hollidays = ini.mid(st, sst - st);
+            if (pay_hollidays != "false"){pay_hollidays = "true";}
         } else {
             QMessageBox::information(nullptr, "Отладка", "Не открывается файл с настройками");
         }
@@ -101,12 +106,12 @@ bool settings::save_ini() const
             ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
                     db_name + "\n" + "win_start = one" + "\n" + "f_wight = " + QString::number(wight) + "\n" +
                     "f_hight = " + QString::number(hight) + "\n" +
-                    "s_port = " + QString::number(port_) + "\n" + "s_pass = " + QString::number(hight) + "\n";
+                    "s_port = " + QString::number(port_) + "\n" + "s_pass = " + pass_ + "\n" + "p_holl = " + pay_hollidays + "\n";
         } else {
             ini = "db_dir = " + db_dir + "\n" + "image_dir = " + image_dir + "\n" + "db_name = " +
                     db_name + "\n" + "win_start = two" + "\n" + "f_wight = " + QString::number(wight) + "\n" +
                     "f_hight = " + QString::number(hight) + "\n" +
-                    "s_port = " + QString::number(port_) + "\n" + "s_pass = " + pass_ + "\n";
+                    "s_port = " + QString::number(port_) + "\n" + "s_pass = " + pass_ + "\n" + "p_holl = " + pay_hollidays + "\n";
         }
         QTextStream stream(&f_ini);
         stream << ini;
@@ -120,8 +125,12 @@ unsigned settings::work_days(const QDate& arg) const
     QDate tmp = arg;
     unsigned ret{0};
     if (tmp >= QDate::currentDate()) return ret;
-    while (tmp != QDate::currentDate()){
-        if (tmp.dayOfWeek() != 6 || tmp.dayOfWeek() != 7 || !is_hollyday(tmp)) ++ret;
+    while (tmp != QDate::currentDate()){ 
+         if (pay_hollidays != "false") {
+             if (!is_hollyday(tmp)) ++ret;
+         } else {
+             if (tmp.dayOfWeek() != 6 || tmp.dayOfWeek() != 7 || !is_hollyday(tmp)) ++ret;
+         }
         tmp = tmp.addDays(1);
     }
     return ret;
